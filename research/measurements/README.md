@@ -16,3 +16,35 @@ a measurement classifiable as Observed rather than assumed.
 `eng/scripts/validate-measurement-ledger.ps1` enforces these rules in CI. It does not require rows to
 exist — an empty ledger is an honest unfinished ledger — but rows that exist must be traceable and
 classified.
+
+## How the current rows were measured
+
+`measure-captures.py` produces them from the private capture set:
+
+```sh
+python research/measurements/measure-captures.py <capture-directory>
+```
+
+It measures scale from the 200 pt calibration rule inside each capture, anchors its search region to
+that rule rather than to fixed pixel coordinates, and repeats every measurement across four mask
+thresholds and six independent captures of the same control. A quantity that moves with the
+threshold is reported unmeasurable rather than rounded into a row.
+
+## What was measured and rejected
+
+Corner radius was attempted for every control above and **rejected**. It is measurable, but not
+stable: the same control reads 3.5–9.0 pt depending on the mask threshold, and the saturated
+Prominent button reads consistently smaller than its neighbours despite being the same shape. That
+is the threshold cutting an antialiased corner at different points, not a real difference. Two
+estimators agreed exactly, but both derive from the same mask, so their agreement validates the
+rounded-rectangle model rather than the threshold — a distinction worth keeping, because ignoring it
+would have put a false 4.75 pt into the ledger.
+
+Radius needs a subpixel-coverage estimator that does not threshold first. Until that exists, no
+radius row belongs here.
+
+Control **width** is omitted where it tracks the label rather than the control.
+
+`toggle-slider` produced no row: the toggle and the slider are different shapes on one band, and the
+band grouping mixes them, so the height read 16.0–21.5 pt. Correctly flagged unstable, and it needs
+per-control handling rather than a looser tolerance.
