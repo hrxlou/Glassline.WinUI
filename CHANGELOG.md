@@ -48,6 +48,7 @@ All notable project changes are recorded here. The project has not published a p
 - Kept observed measurement-ledger work explicitly pending native reference capture.
 - Added a deterministic capture matrix: `CaptureMatrix` enumerates 9 scenes × 8 variants, emits `capture-manifest.csv`, and a test pins the committed manifest to the generator. Each `capture_id` is the vocabulary a measurement-ledger row cites as `source_id`.
 - Added a 200 pt calibration rule and `backing_scale` readout to every probe scene, so a capture records the pixel-to-point factor its own measurements depend on.
+- Added a live capture-context header: the probe resolves the current appearance, window state, and accessibility mode to a `capture_id` and prints it, reports the full accessibility environment, and shows a warning when the backing scale is below 2x. Captures are named from what the header shows rather than from what the operator intended to set.
 - Added `research/AppleReferenceLab/CAPTURE_PROCEDURE.md` covering the required set, machine record, scale calibration, capture naming, and the capture-to-ledger rules.
 - Added `eng/scripts/validate-measurement-ledger.ps1` to CI. It enforces the ledger schema, classification vocabulary, confidence and asset-policy fields, `os_version` on any row carrying geometry, and that an `Observed` AppleReferenceLab row cites a capture id the manifest actually requires. An empty ledger remains valid.
 

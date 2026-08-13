@@ -74,9 +74,19 @@ private struct ReferenceLabRootView: View {
     }
 }
 
+/// Header rendered into every scene so a capture proves its own context.
+///
+/// A capture that does not state the appearance, window state, accessibility mode, and scale it was
+/// taken under cannot be classified `Observed` later; the operator's intent is not evidence. The
+/// resolved `capture_id` is printed so the file can be named by reading it off the capture itself.
 @MainActor
 private struct ReferenceHeader: View {
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorSchemeContrast) private var colorSchemeContrast
+    @Environment(\.controlActiveState) private var controlActiveState
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityDifferentiateWithoutColor) private var differentiateWithoutColor
 
     let scene: ReferenceScene
 
@@ -84,23 +94,84 @@ private struct ReferenceHeader: View {
         VStack(alignment: .leading, spacing: 6) {
             Text(scene.title)
                 .font(.title2)
-            Text("scene_id=\(scene.rawValue) appearance=\(colorScheme == .dark ? "dark" : "light")")
-                .font(.caption.monospaced())
+
+            Text("capture_id=\(captureIdDescription)")
+                .font(.caption.monospaced().bold())
                 .textSelection(.enabled)
-            Text("backing_scale=\(backingScaleDescription) os=\(ProcessInfo.processInfo.operatingSystemVersionString)")
-                .font(.caption.monospaced())
+                .accessibilityIdentifier("ReferenceCaptureId")
+
+            Text("appearance=\(appearance.rawValue) | window=\(windowState.rawValue) | contrast=\(colorSchemeContrast == .increased ? "increased" : "standard") | reduceTransparency=\(reduceTransparency) | reduceMotion=\(reduceMotion) | differentiateWithoutColor=\(differentiateWithoutColor)")
+                .font(.caption2.monospaced())
                 .foregroundStyle(.secondary)
                 .textSelection(.enabled)
+
+            Text("backing_scale=\(backingScaleDescription) os=\(ProcessInfo.processInfo.operatingSystemVersionString)")
+                .font(.caption2.monospaced())
+                .foregroundStyle(.secondary)
+                .textSelection(.enabled)
+
+            if let warning = scaleWarning {
+                Text(warning)
+                    .font(.caption.monospaced().bold())
+                    .foregroundStyle(.red)
+                    .textSelection(.enabled)
+                    .accessibilityIdentifier("ReferenceScaleWarning")
+            }
+
             CalibrationRule()
         }
     }
 
+    private var appearance: CaptureAppearance {
+        colorScheme == .dark ? .dark : .light
+    }
+
+    private var windowState: CaptureWindowState {
+        // A screenshot tool that takes focus makes every capture inactive, which is why this is read
+        // from the live environment rather than assumed.
+        controlActiveState == .inactive ? .inactive : .active
+    }
+
+    private var captureIdDescription: String {
+        guard let descriptor = CaptureMatrix.descriptor(
+            scene: scene,
+            appearance: appearance,
+            windowState: windowState,
+            reduceTransparency: reduceTransparency,
+            increaseContrast: colorSchemeContrast == .increased
+        ) else {
+            return "NONE — this environment matches no required capture; do not name a file from it"
+        }
+
+        return descriptor.id
+    }
+
+    private var backingScale: Double? {
+        NSScreen.main.map { Double($0.backingScaleFactor) }
+    }
+
     private var backingScaleDescription: String {
-        guard let scale = NSScreen.main?.backingScaleFactor else {
+        guard let backingScale else {
             return "unknown"
         }
 
-        return String(format: "%.2f", scale)
+        return String(format: "%.2f", backingScale)
+    }
+
+    private var scaleWarning: String? {
+        guard let backingScale else {
+            return "WARNING: backing scale unknown; geometry measured from this capture is not Observed"
+        }
+
+        guard CaptureMatrix.isUsableForGeometry(backingScale: backingScale) else {
+            return String(
+                format: "WARNING: backing_scale=%.2f is below the required %.0fx; this capture cannot support geometry rows",
+                backingScale,
+                CaptureMatrix.requiredBackingScale
+            )
+        }
+
+        return nil
     }
 }
 

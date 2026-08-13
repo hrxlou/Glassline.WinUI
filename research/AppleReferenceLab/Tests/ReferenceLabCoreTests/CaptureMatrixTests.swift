@@ -42,6 +42,64 @@ func everySceneRequiresTheSameCaptureShape() {
 }
 
 @Test
+func accessibilityModeResolvesOnlyIsolatedVariants() {
+    #expect(CaptureMatrix.accessibilityMode(reduceTransparency: false, increaseContrast: false) == .standard)
+    #expect(CaptureMatrix.accessibilityMode(reduceTransparency: true, increaseContrast: false) == .reduceTransparency)
+    #expect(CaptureMatrix.accessibilityMode(reduceTransparency: false, increaseContrast: true) == .increaseContrast)
+
+    // Both settings on is a real macOS state that no required capture describes.
+    #expect(CaptureMatrix.accessibilityMode(reduceTransparency: true, increaseContrast: true) == nil)
+}
+
+@Test
+func resolvedDescriptorsAreAlwaysRequiredCaptures() {
+    let required = Set(CaptureMatrix.all.map(\.id))
+
+    for scene in ReferenceScene.allCases {
+        for appearance in CaptureAppearance.allCases {
+            for windowState in CaptureWindowState.allCases {
+                for reduceTransparency in [false, true] {
+                    for increaseContrast in [false, true] {
+                        let descriptor = CaptureMatrix.descriptor(
+                            scene: scene,
+                            appearance: appearance,
+                            windowState: windowState,
+                            reduceTransparency: reduceTransparency,
+                            increaseContrast: increaseContrast
+                        )
+
+                        guard let descriptor else { continue }
+
+                        #expect(required.contains(descriptor.id))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Test
+func inactiveWindowResolvesNoAccessibilityVariant() {
+    let descriptor = CaptureMatrix.descriptor(
+        scene: .buttons,
+        appearance: .dark,
+        windowState: .inactive,
+        reduceTransparency: true,
+        increaseContrast: false
+    )
+
+    #expect(descriptor == nil)
+}
+
+@Test
+func belowRetinaScaleIsNotUsableForGeometry() {
+    #expect(CaptureMatrix.isUsableForGeometry(backingScale: 1) == false)
+    #expect(CaptureMatrix.isUsableForGeometry(backingScale: 1.5) == false)
+    #expect(CaptureMatrix.isUsableForGeometry(backingScale: 2))
+    #expect(CaptureMatrix.isUsableForGeometry(backingScale: 3))
+}
+
+@Test
 func committedManifestMatchesTheGenerator() throws {
     let manifestURL = packageRoot.appendingPathComponent("capture-manifest.csv")
     let committed = try String(contentsOf: manifestURL, encoding: .utf8)
