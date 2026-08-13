@@ -19,12 +19,14 @@ $sceneSmoke = Get-Content $sceneSmokePath -Raw
 
 [xml]$xamlXml = $xaml
 foreach ($automationId in @('Scene.WindowFoundation','Scene.MaterialRegions','Scene.ControlsMatrix','Diagnostics.MaterialRuntime')) {
-    if ($xaml -notmatch [regex]::Escape("AutomationProperties.AutomationId=\"$automationId\"")) {
+    $needle = 'AutomationProperties.AutomationId="' + $automationId + '"'
+    if ($xaml -notmatch [regex]::Escape($needle)) {
         throw "Gallery missing deterministic automation ID: $automationId"
     }
 }
 foreach ($name in @('SidebarMaterialRegion','ToolbarMaterialRegion','BackdropStatus','EnvironmentStatus','MaterialStatus','RegionStatus')) {
-    if ($xaml -notmatch [regex]::Escape("x:Name=\"$name\"")) {
+    $needle = 'x:Name="' + $name + '"'
+    if ($xaml -notmatch [regex]::Escape($needle)) {
         throw "Gallery missing diagnostics/material element: $name"
     }
 }
