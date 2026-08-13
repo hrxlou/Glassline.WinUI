@@ -11,7 +11,12 @@
     <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
     <RepositoryUrl>https://github.com/hrxlou/Glassline.WinUI</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/hrxlou/Glassline.WinUI</PackageProjectUrl>
     <Authors>Glassline.WinUI contributors</Authors>
     <Copyright>Copyright (c) Glassline.WinUI contributors</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageTags>winui;winui3;windows11;design-system</PackageTags>
+    <EnablePackageValidation>true</EnablePackageValidation>
   </PropertyGroup>
 </Project>
