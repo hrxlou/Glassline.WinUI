@@ -143,6 +143,13 @@ public enum CaptureMatrix {
             return nil
         }
 
+        // The contrast variant is scene-limited, so a contrast environment on any other scene is a
+        // capture nobody asked for. Saying so is the point: the operator sees NONE and moves on
+        // rather than producing a file whose id is not in the manifest.
+        guard accessibilityModes(for: scene).contains(mode) else {
+            return nil
+        }
+
         return CaptureDescriptor(
             scene: scene,
             appearance: appearance,

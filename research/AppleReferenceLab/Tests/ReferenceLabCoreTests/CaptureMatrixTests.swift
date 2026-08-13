@@ -91,6 +91,22 @@ func resolvedDescriptorsAreAlwaysRequiredCaptures() {
 }
 
 @Test
+func contrastEnvironmentResolvesNothingOnScenesThatDoNotRequireIt() {
+    let scene = ReferenceScene.toolbar
+    #expect(CaptureMatrix.contrastVariantScenes.contains(scene) == false)
+
+    let descriptor = CaptureMatrix.descriptor(
+        scene: scene,
+        appearance: .light,
+        windowState: .active,
+        reduceTransparency: true,
+        increaseContrast: true
+    )
+
+    #expect(descriptor == nil)
+}
+
+@Test
 func inactiveWindowResolvesNoAccessibilityVariant() {
     let descriptor = CaptureMatrix.descriptor(
         scene: .buttons,
