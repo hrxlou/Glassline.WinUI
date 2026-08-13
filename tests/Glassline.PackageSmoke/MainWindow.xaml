@@ -1,0 +1,17 @@
+<Window
+    x:Class="Glassline.PackageSmoke.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:glassline="using:Glassline.WinUI.Controls"
+    Title="Glassline package smoke">
+    <StackPanel Padding="24" Spacing="12">
+        <glassline:GlasslineSearchField
+            x:Name="SearchField"
+            AutomationProperties.Name="Package smoke search"
+            PlaceholderText="Search" />
+        <glassline:GlasslineSegmentedControl
+            x:Name="SegmentedControl"
+            AutomationProperties.Name="Package smoke mode"
+            SelectedIndex="0" />
+    </StackPanel>
+</Window>
