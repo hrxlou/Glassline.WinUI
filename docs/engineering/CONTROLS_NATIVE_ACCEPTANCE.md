@@ -27,8 +27,11 @@ This ledger prevents source compilation from being mistaken for final component 
 - Theme resource-contract validation;
 - Controls source/template-contract validation;
 - Windows WinUI XAML/C# compilation on x64 and ARM64;
-- Gallery XAML compilation with both controls instantiated;
-- NuGet package creation and forbidden-asset scan.
+- Gallery XAML compilation with both controls instantiated through project references;
+- NuGet package creation and forbidden-asset scan;
+- separate WinUI package-consumer restore/build using only generated `Glassline.WinUI.Controls` NuGet plus its transitive package dependencies, with no Glassline project reference.
+
+The package-consumer lane is intentionally separate from `Glassline.Gallery`: Gallery proves source/project integration, while `tests/Glassline.PackageSmoke` proves the produced NuGet can actually be consumed by a fresh WinUI project.
 
 ## Native interactive evidence still required for visual/component DoD
 
