@@ -33,7 +33,7 @@ foreach ($document in $documents) {
 
         if (-not (Test-Path $resolvedTarget)) {
             $relativeDocument = [System.IO.Path]::GetRelativePath($root, $document)
-            throw "Broken local Markdown link in $relativeDocument: $target"
+            throw "Broken local Markdown link in ${relativeDocument}: $target"
         }
     }
 }
