@@ -27,18 +27,28 @@ func captureIdentifiersAreUniqueAndParseable() {
 }
 
 @Test
-func everySceneRequiresTheSameCaptureShape() {
+func sceneCaptureShapeFollowsTheContrastVariantRule() {
     for scene in ReferenceScene.allCases {
         let descriptors = CaptureMatrix.required(for: scene)
+        let wantsContrast = CaptureMatrix.contrastVariantScenes.contains(scene)
 
-        #expect(descriptors.count == 8)
+        #expect(descriptors.count == (wantsContrast ? 8 : 6))
         #expect(descriptors.allSatisfy { $0.scene == scene })
 
         // Inactive-window evidence is only required for the default accessibility mode.
         let inactive = descriptors.filter { $0.windowState == .inactive }
         #expect(inactive.count == 2)
         #expect(inactive.allSatisfy { $0.accessibilityMode == .standard })
+
+        let contrast = descriptors.filter { $0.accessibilityMode == .increaseContrast }
+        #expect(contrast.count == (wantsContrast ? 2 : 0))
     }
+}
+
+@Test
+func contrastVariantIsRequiredOnlyWhereItAddsEvidence() {
+    #expect(CaptureMatrix.contrastVariantScenes == [.buttons, .textInput, .sidebar])
+    #expect(CaptureMatrix.all.count == 60)
 }
 
 @Test
