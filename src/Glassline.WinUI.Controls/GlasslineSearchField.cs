@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Controls;
 
 namespace Glassline.WinUI.Controls;
@@ -56,6 +57,8 @@ public sealed class GlasslineSearchField : Control
         get => (bool)GetValue(IsClearButtonVisibleProperty);
         set => SetValue(IsClearButtonVisibleProperty, value);
     }
+
+    protected override AutomationPeer OnCreateAutomationPeer() => new GlasslineSearchFieldAutomationPeer(this);
 
     protected override void OnApplyTemplate()
     {

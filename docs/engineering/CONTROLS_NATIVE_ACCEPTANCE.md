@@ -9,23 +9,27 @@ This ledger prevents source compilation from being mistaken for final component 
 ### GlasslineSearchField
 
 - templated C# `Control`;
-- native WinUI `TextBox` is `PART_Input` and remains the text, selection, clipboard, keyboard, and IME engine;
+- native WinUI `TextBox` is `PART_Input` and remains the text, selection, clipboard, keyboard, IME, and text/value automation-pattern engine;
 - dependency properties: `Text`, `PlaceholderText`, `IsClearButtonVisible`;
 - clear action returns programmatic focus to the native input;
-- `AutomationProperties.Name` on the outer control is forwarded to the input at template application time.
+- `AutomationProperties.Name` on the outer control is forwarded to the input at template application time;
+- outer wrapper creates a `FrameworkElementAutomationPeer` reporting class `GlasslineSearchField` and `AutomationControlType.Group`; it deliberately does not implement text/value provider patterns.
 
 ### GlasslineSegmentedControl
 
 - templated C# `Control`;
-- native WinUI `ListBox` is `PART_Selector` and remains the single-selection/keyboard/automation engine;
+- native WinUI `ListBox` is `PART_Selector` and remains the single-selection/keyboard/selection-automation engine;
 - dependency properties: `ItemsSource`, `SelectedIndex`, `SelectedItem`;
-- outer automation name is forwarded to the selector at template application time.
+- outer automation name is forwarded to the selector at template application time;
+- outer wrapper creates a `FrameworkElementAutomationPeer` reporting class `GlasslineSegmentedControl` and `AutomationControlType.Group`; it deliberately does not implement selection provider patterns.
+
+The wrapper peers exist to give each custom control explicit UI Automation identity without replacing or duplicating the richer native peers of their template parts.
 
 ## Automated evidence required before merge
 
 - repository structural policy check;
 - Theme resource-contract validation;
-- Controls source/template-contract validation;
+- Controls source/template/automation-contract validation;
 - Windows WinUI XAML/C# compilation on x64 and ARM64;
 - Gallery XAML compilation with both controls instantiated through project references;
 - NuGet package creation and forbidden-asset scan;
@@ -37,8 +41,11 @@ The package-consumer lane is intentionally separate from `Glassline.Gallery`: Ga
 
 These checks require an interactive Windows 11 desktop and are not represented as complete by a hosted compile runner:
 
+- inspect the UI Automation tree and confirm wrapper Group peers do not cause duplicate or confusing Narrator announcements;
+- verify native TextBox edit/text/value patterns remain exposed and usable through SearchField;
+- verify native ListBox selection/selection-item patterns remain exposed and usable through SegmentedControl;
 - pointer over / pressed / keyboard focus visual-state inspection;
-- Narrator + UI Automation role/name/state/value inspection;
+- Narrator role/name/state/value and reading-order inspection;
 - Korean 2-set, Japanese, and Simplified Chinese IME composition/candidate-window tests for SearchField;
 - clipboard/selection/undo/redo smoke tests;
 - 100/125/150/200% scale and text-scaling inspection;

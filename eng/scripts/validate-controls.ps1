@@ -3,13 +3,15 @@ $ErrorActionPreference = 'Stop'
 $root = Resolve-Path (Join-Path $PSScriptRoot '../..')
 $searchPath = Join-Path $root 'src/Glassline.WinUI.Controls/GlasslineSearchField.cs'
 $segmentedPath = Join-Path $root 'src/Glassline.WinUI.Controls/GlasslineSegmentedControl.cs'
+$searchPeerPath = Join-Path $root 'src/Glassline.WinUI.Controls/GlasslineSearchFieldAutomationPeer.cs'
+$segmentedPeerPath = Join-Path $root 'src/Glassline.WinUI.Controls/GlasslineSegmentedControlAutomationPeer.cs'
 $backdropPath = Join-Path $root 'src/Glassline.WinUI.Controls/GlasslineWindowBackdropController.cs'
 $genericPath = Join-Path $root 'src/Glassline.WinUI.Controls/Themes/Generic.xaml'
 $galleryXamlPath = Join-Path $root 'samples/Glassline.Gallery/MainWindow.xaml'
 $galleryCodePath = Join-Path $root 'samples/Glassline.Gallery/MainWindow.xaml.cs'
 $packageSmokeCodePath = Join-Path $root 'tests/Glassline.PackageSmoke/MainWindow.xaml.cs'
 
-foreach ($path in @($searchPath, $segmentedPath, $backdropPath, $genericPath, $galleryXamlPath, $galleryCodePath, $packageSmokeCodePath)) {
+foreach ($path in @($searchPath, $segmentedPath, $searchPeerPath, $segmentedPeerPath, $backdropPath, $genericPath, $galleryXamlPath, $galleryCodePath, $packageSmokeCodePath)) {
     if (-not (Test-Path $path)) {
         throw "Missing controls baseline artifact: $path"
     }
@@ -17,6 +19,8 @@ foreach ($path in @($searchPath, $segmentedPath, $backdropPath, $genericPath, $g
 
 $search = Get-Content $searchPath -Raw
 $segmented = Get-Content $segmentedPath -Raw
+$searchPeer = Get-Content $searchPeerPath -Raw
+$segmentedPeer = Get-Content $segmentedPeerPath -Raw
 $backdrop = Get-Content $backdropPath -Raw
 $generic = Get-Content $genericPath -Raw
 $gallery = Get-Content $galleryXamlPath -Raw
@@ -35,6 +39,9 @@ if ($search -notmatch 'PART_Input' -or $search -notmatch 'PART_ClearButton') {
 if ($search -match 'TextComposition|CoreText|InputMethod|IME') {
     throw 'SearchField must not introduce a custom text/IME engine.'
 }
+if ($search -notmatch 'OnCreateAutomationPeer' -or $search -notmatch 'GlasslineSearchFieldAutomationPeer') {
+    throw 'SearchField must create its explicit wrapper AutomationPeer.'
+}
 if ($segmented -notmatch 'typeof\(ListBox\)' -or $segmented -notmatch 'as ListBox') {
     throw 'SegmentedControl must delegate selection/input behavior to a native ListBox.'
 }
@@ -43,6 +50,18 @@ if ($segmented -notmatch 'SelectionMode\.Single') {
 }
 if ($segmented -notmatch 'PART_Selector') {
     throw 'SegmentedControl template-part contract is incomplete.'
+}
+if ($segmented -notmatch 'OnCreateAutomationPeer' -or $segmented -notmatch 'GlasslineSegmentedControlAutomationPeer') {
+    throw 'SegmentedControl must create its explicit wrapper AutomationPeer.'
+}
+
+foreach ($peer in @($searchPeer, $segmentedPeer)) {
+    if ($peer -notmatch 'FrameworkElementAutomationPeer' -or $peer -notmatch 'GetClassNameCore' -or $peer -notmatch 'AutomationControlType\.Group') {
+        throw 'Composite wrapper peer must provide stable FrameworkElementAutomationPeer Group identity.'
+    }
+    if ($peer -match 'IValueProvider|ITextProvider|ISelectionProvider|ISelectionItemProvider|GetPatternCore|PatternInterface') {
+        throw 'Wrapper AutomationPeer must not duplicate native TextBox/ListBox automation patterns.'
+    }
 }
 
 if ($backdrop -notmatch 'class GlasslineWindowBackdropController' -or $backdrop -notmatch 'SystemBackdrop') {
@@ -78,4 +97,4 @@ if ($packageSmokeCode -notmatch 'GlasslineWindowBackdropController') {
     throw 'Generated-NuGet smoke consumer must compile the public window-backdrop controller.'
 }
 
-Write-Host 'Controls static/template contract validation passed.'
+Write-Host 'Controls static/template/automation contract validation passed.'

@@ -1,6 +1,7 @@
 using System.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Controls;
 
 namespace Glassline.WinUI.Controls;
@@ -54,6 +55,8 @@ public sealed class GlasslineSegmentedControl : Control
         get => GetValue(SelectedItemProperty);
         set => SetValue(SelectedItemProperty, value);
     }
+
+    protected override AutomationPeer OnCreateAutomationPeer() => new GlasslineSegmentedControlAutomationPeer(this);
 
     protected override void OnApplyTemplate()
     {
