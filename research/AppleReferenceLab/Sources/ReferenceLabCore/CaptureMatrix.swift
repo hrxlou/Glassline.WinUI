@@ -57,11 +57,26 @@ public struct CaptureDescriptor: Equatable, Sendable {
 public enum CaptureMatrix {
     public static let manifestHeader = "capture_id,scene,appearance,window_state,accessibility_mode"
 
+    /// Scenes where the contrast variant teaches something the other variants do not.
+    ///
+    /// macOS couples Increase Contrast to Reduce Transparency, so the contrast captures repeat a
+    /// material fallback already covered by the `reduce-transparency` variant. What they add is the
+    /// contrast delta — chiefly added control borders. `buttons` and `text-input` carry that for
+    /// filled and field-shaped controls; `sidebar` is the one region whose material visibly changes
+    /// in Light. Requiring the variant everywhere else buys repetition, not evidence.
+    public static let contrastVariantScenes: Set<ReferenceScene> = [.buttons, .textInput, .sidebar]
+
+    public static func accessibilityModes(for scene: ReferenceScene) -> [CaptureAccessibilityMode] {
+        CaptureAccessibilityMode.allCases.filter { mode in
+            mode != .increaseContrast || contrastVariantScenes.contains(scene)
+        }
+    }
+
     public static func required(for scene: ReferenceScene) -> [CaptureDescriptor] {
         var descriptors: [CaptureDescriptor] = []
 
         for appearance in CaptureAppearance.allCases {
-            for mode in CaptureAccessibilityMode.allCases {
+            for mode in accessibilityModes(for: scene) {
                 // Inactive-window evidence is required once per appearance. The accessibility
                 // variants isolate material and contrast response, which activation does not change.
                 let windowStates: [CaptureWindowState] = mode == .standard

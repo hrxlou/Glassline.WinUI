@@ -1,6 +1,6 @@
 # AppleReferenceLab Capture Procedure
 
-Status: **54 of 72 required captures taken and verified; 18 `increase-contrast` captures outstanding**.
+Status: **54 of 60 required captures taken and verified; 6 `increase-contrast` captures outstanding**.
 
 Session history:
 
@@ -11,7 +11,21 @@ Session history:
   every filename matching its `capture_id`, plus 4 open-menu/popover observations. The
   `increase-contrast` variant could not be captured because the matrix required an isolated contrast
   state that macOS does not provide; the variant has since been redefined to the coupled state
-  macOS actually exposes, so those 18 captures are now reachable.
+  macOS actually exposes.
+
+## Why the contrast variant is scene-limited
+
+macOS couples Increase Contrast to Reduce Transparency, so a contrast capture repeats a material
+fallback the `reduce-transparency` variant already records. Measured across the captures in hand,
+that fallback is plainly visible: in Dark it changes roughly 77% of pixels in every scene, and in
+Light it changes almost nothing except `sidebar`.
+
+What the contrast variant adds on top is the contrast delta. An operator confirmed on 2026-08-14
+that Increase Contrast adds control borders on macOS 26.5.2; that report is not itself capture
+evidence and is why the variant is still required, on the scenes that can show it. `buttons` and
+`text-input` carry border behavior for filled and field-shaped controls, and `sidebar` is the one
+region whose material visibly changes in Light. The remaining six scenes would add repetition, not
+evidence, so the required set is 60 rather than 72.
 
 This is the operating procedure for an interactive macOS 26 reference session. It exists because the
 capture matrix was previously prose. Prose produces a different set of screenshots every session and
