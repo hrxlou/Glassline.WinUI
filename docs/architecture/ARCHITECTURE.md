@@ -1,6 +1,5 @@
 # Architecture & Package Contract
 
-
 # Part D — Architecture and package contract
 
 ## 9. Package layout
@@ -29,25 +28,28 @@
 - `GlasslineInspector`
 - toolbar helpers
 - window shell helpers
+- shared material-region primitive (`GlassContainer` working name)
 
 **v1 소비자:** C# first-class.  
 C++/WinRT에서 managed custom control을 직접 소비하는 문제를 Theme package와 분리한다.
+
+The shared material-region primitive may use baseline Windows Composition APIs that are already part of the Windows App SDK. It must not require the optional advanced renderer merely to provide grouped functional glass.
 
 ### `Glassline.WinUI.Effects`
 
 - advanced Composition helpers
 - optional Win2D/D2D/D3D work
-- feature detection
-- adaptive fallback
+- feature detection helpers when they are renderer-specific
+- experimental refraction/lensing
 
-Theme/Controls가 Effects를 강제 의존하지 않도록 한다.
+Theme/Controls가 Effects를 강제 의존하지 않도록 한다. Advanced optical work belongs here; the normal semantic/fallback experience must remain usable without it.
 
 ### `Glassline.Gallery`
 
 제품 품질의 핵심 test vehicle.
 
 - Settings archetype
-- Finder/productivity archetype
+- productivity/file-browser archetype
 - component state matrix
 - accessibility playground
 - benchmark scenes
@@ -84,7 +86,59 @@ Theme/Controls가 Effects를 강제 의존하지 않도록 한다.
 
 ---
 
-## 11. Public API policy
+## 11. Material architecture contract
+
+Detailed source of truth: [`MATERIAL_ARCHITECTURE.md`](MATERIAL_ARCHITECTURE.md).
+
+### Foundation
+
+The normal window foundation prefers a Windows system Mica backdrop when platform support and system policy allow it. A semantic Solid/High Contrast fallback is mandatory. Mica is a window/base-layer concern; it is not an excuse to attach a live backdrop to every group, row, or input.
+
+```text
+Window foundation
+    ├─ Mica when appropriate
+    └─ semantic Solid fallback
+
+Content surfaces
+    └─ cheap semantic fills
+
+Functional surfaces
+    └─ grouped Windows Composition glass regions
+```
+
+### Shared glass regions
+
+A `GlassContainer`-style region primitive is required by the architecture. The final public type name may change before preview, but grouped controls must be able to share material/backdrop resources instead of each owning a separate live effect chain.
+
+Typical region boundaries:
+
+- one sidebar material region;
+- one toolbar island/group;
+- one popover/flyout material region;
+- selected floating/interactive groups where the material itself conveys hierarchy.
+
+Virtualized list/tree/table items must not receive independent live backdrop pipelines as a default styling strategy.
+
+### Adaptive material services
+
+Working internal responsibilities:
+
+```text
+MaterialCapabilities
+MaterialQualityManager
+BackdropProvider
+MaterialBrush
+GlassContainer
+ExperimentalRefraction
+```
+
+`MaterialQualityManager` owns `Auto → Full / Reduced / Solid`. Continuous resize must temporarily reduce expensive effects; inactive/background windows suppress nonessential continuous material animation. Advanced refraction remains subject to ADR-0009.
+
+Consumer-facing APIs use semantic roles (`Sidebar`, `Toolbar`, `Popover`, `Interactive`, `Prominent`) rather than freezing raw blur/distortion/tint constants as the primary contract.
+
+---
+
+## 12. Public API policy
 
 ### 기본 사용법
 
@@ -115,17 +169,28 @@ Theme/Controls가 Effects를 강제 의존하지 않도록 한다.
 <CommandBar glassline:Glass.Group="PrimaryToolbar" />
 ```
 
+Working grouped-material API shape:
+
+```xml
+<glassline:GlassContainer Material="Toolbar" Quality="Auto">
+    <CommandBar />
+</glassline:GlassContainer>
+```
+
+The name and exact shape are not frozen until the preview API review; the shared-region behavior is the stable architecture requirement.
+
 ### API design rules
 
 - token 이름은 visual literal이 아니라 semantic role
 - public API에 `macOS`, `SwiftUI`, `Aqua`, `Finder`를 넣지 않음
+- raw optical constants are implementation details unless a specific low-level API is intentionally approved
 - internal source comment에는 reference provenance를 기록 가능
 - style key는 stable contract로 취급
 - internal template part name은 명시적으로 document하지 않으면 private
 
 ---
 
-## 12. Design Generation / SemVer
+## 13. Design Generation / SemVer
 
 Apple은 매년 디자인을 바꿀 수 있지만 consumer app이 package update 한 번으로 갑자기 전부 바뀌면 안 된다.
 
@@ -142,7 +207,7 @@ DesignGeneration: 2026
 - **Minor**: additive controls/tokens, opt-in 새로운 visual generation 허용.
 - **Major**: API breaking change 또는 default generation 변경.
 
-새 Apple 디자인을 연구해도 기존 generation baseline은 유지한다.
+새 디자인 연구가 진행돼도 기존 generation baseline은 유지한다.
 
 ```xml
 <glassline:GlasslineResources DesignGeneration="2026" />
@@ -158,7 +223,7 @@ DesignGeneration: 2026
 
 ---
 
-## 13. Architecture Decision Records
+## 14. Architecture Decision Records
 
 최소 ADR:
 
@@ -171,6 +236,7 @@ DesignGeneration: 2026
 - `ADR-0007` Full-fidelity target is Windows 11
 - `ADR-0008` Design Generation separate from package SemVer
 - `ADR-0009` Advanced refraction is optional, never release blocker
+- `ADR-0010` Mica foundation, shared glass regions, and adaptive material quality
 
 모든 큰 변경은 ADR로 남긴다.
 

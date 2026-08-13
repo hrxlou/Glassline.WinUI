@@ -1,6 +1,5 @@
 # Validation Engineering
 
-
 # Part F — Validation engineering
 
 ## 18. Visual regression strategy
@@ -74,17 +73,58 @@ Text input visual을 새로 만들더라도 **실제 WinUI TextBox/AutoSuggestBo
 - inactive/background window의 animation 최소화
 - RDP / low-end GPU / effects-disabled에서 자동 Reduced/Solid downgrade
 - compositor resource leak 0
+- grouped controls use shared material regions rather than per-control live backdrop pipelines
 
-Benchmark scenes:
+### Material-specific runtime rules
 
-1. Settings 100 rows + sidebar + toolbar
-2. Finder grid 500 items + selection + scrolling
+- Normal capable local session may use `Full`.
+- Continuous window resize must temporarily use `Reduced` for expensive material work: advanced refraction off, blur/effect complexity reduced, nonessential continuous pointer/specular animation suppressed.
+- Inactive/background windows stop nonessential continuous material animation and may use a cheaper/static material state.
+- High Contrast/effects-disabled forces `Solid`.
+- Slow/unsupported composition effects must switch to a simpler graph instead of attempting the Full graph.
+- Virtualized rows/items use semantic fills for normal/hover/selection and do not own independent live backdrop brushes.
+
+### Benchmark scenes
+
+1. Settings 100 rows + one sidebar region + toolbar region
+2. productivity/file-browser grid 500 items + selection + scrolling
 3. Tree 5k nodes lazy expanded
 4. Popover/menu rapid open-close
-5. continuous window resize 10s
+5. continuous window resize 10s with mode-transition trace
 6. Light↔Dark / active↔inactive transition
+7. multi-window scene: active + inactive/background window
+8. glass-region stress scene: same visible UI rendered with grouped regions vs deliberately fragmented regions for diagnostic comparison
 
-Release 전에 frame-time percentile, memory delta, resize behavior를 기록한다. 숫자 budget은 benchmark hardware 선정 후 `PERF_BUDGET.md`로 잠근다.
+### Required measurements
+
+Release-performance evidence should record, where the selected tooling can capture it reliably:
+
+- frame-time P50 / P95 / P99;
+- process memory delta;
+- GPU utilization;
+- GPU memory delta;
+- power/energy signal when available;
+- active glass-region count;
+- total glass pixel area or percentage of window area;
+- material mode (`Full`, `Reduced`, `Solid`);
+- refraction enabled/disabled;
+- active/inactive and resize state.
+
+The cost model to watch is approximately **glass area × region count × effect complexity × update frequency**. FPS alone is not sufficient evidence.
+
+### M2 material gate
+
+The M2 Glass Engine does not pass merely because a single isolated panel looks correct. It must demonstrate:
+
+- stable Sidebar + Toolbar together;
+- predictable Full → Reduced → Solid transitions;
+- no per-row live backdrop strategy in virtualized data scenes;
+- no advanced refraction requirement for visual coherence;
+- continuous resize remains responsive with the Reduced policy;
+- inactive/background material activity is measurably lower or static;
+- no compositor resource leak across repeated open/close/theme/state transitions.
+
+Release 전에 measurements, resize behavior, material mode transitions, and region counts are written to `PERF_BUDGET.md`/trace artifacts. Numeric budgets are locked after benchmark hardware is selected.
 
 ---
 

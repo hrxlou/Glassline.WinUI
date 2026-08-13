@@ -12,22 +12,26 @@ It is designed to keep Windows behavior native while giving WinUI applications a
 ## Design direction
 
 - **Functional glass, not blur everywhere.** Translucent material is reserved for chrome, navigation, overlays, popovers, and other surfaces where depth and context matter.
+- **Mica-compatible foundation.** The window base prefers the native Windows Mica system backdrop when supported and appropriate, with semantic solid fallbacks. Normal content rows, tables, and input surfaces do not become independent live glass layers.
+- **Grouped material regions.** Toolbar buttons, sidebar controls, and related glass elements should share `GlassContainer`-style material regions instead of creating a backdrop/effect pipeline per control.
 - **Layered, luminous surfaces.** Soft translucency, restrained separators, subtle edge light, and context-aware depth replace heavy borders and generic gray cards.
+- **Adaptive quality.** `Auto` selects Full, Reduced, or Solid material behavior based on accessibility, environment, and compositor capability. Expensive effects are reduced during continuous resize and nonessential animation is suppressed for inactive/background windows.
 - **Desktop-first density.** Toolbars, sidebars, inspectors, menus, settings surfaces, lists, outlines, and data-heavy layouts are first-class targets.
 - **Windows-native behavior.** Standard caption semantics, Snap, resize, system menus, keyboard conventions, accessibility, and native text input are preserved.
-- **Graceful fallback.** Light, Dark, High Contrast, inactive-window states, reduced effects, and solid rendering are part of the design contract.
-- **No required custom renderer.** The core stays on WinUI 3; advanced optical effects are optional.
+- **No required custom renderer.** The core stays on WinUI 3 and Windows Composition; advanced optical refraction remains optional and experimental.
+
+The material architecture is documented in [`docs/architecture/MATERIAL_ARCHITECTURE.md`](docs/architecture/MATERIAL_ARCHITECTURE.md).
 
 ## Planned packages
 
 ```text
 Glassline.WinUI.Theme      XAML resources, semantic tokens, styles, and templates
-Glassline.WinUI.Controls   Desktop-oriented composite controls
-Glassline.WinUI.Effects    Optional Composition and advanced material helpers
-Glassline.Gallery          Reference app and component gallery
+Glassline.WinUI.Controls   Desktop-oriented composite controls and material-region primitives
+Glassline.WinUI.Effects    Optional advanced Composition/optical helpers
+Glassline.Gallery          Reference app, component gallery, and benchmark vehicle
 ```
 
-The intended usage model is to keep ordinary WinUI controls wherever possible and apply Glassline resources and components on top of them.
+The intended usage model is to keep ordinary WinUI controls wherever possible and apply Glassline resources and components on top of them. Consumer-facing material APIs should express semantic roles such as Toolbar, Sidebar, or Popover rather than exposing raw blur/distortion constants as the main contract.
 
 ## Scope
 
