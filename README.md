@@ -1,60 +1,109 @@
 # Glassline.WinUI
 
+[![Windows build](https://github.com/hrxlou/Glassline.WinUI/actions/workflows/windows-build.yml/badge.svg)](https://github.com/hrxlou/Glassline.WinUI/actions/workflows/windows-build.yml)
+[![AppleReferenceLab macOS](https://github.com/hrxlou/Glassline.WinUI/actions/workflows/reference-lab-macos.yml/badge.svg)](https://github.com/hrxlou/Glassline.WinUI/actions/workflows/reference-lab-macos.yml)
 [![Repository policy checks](https://github.com/hrxlou/Glassline.WinUI/actions/workflows/policy-checks.yml/badge.svg)](https://github.com/hrxlou/Glassline.WinUI/actions/workflows/policy-checks.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Glassline.WinUI** is a native WinUI 3 design system for Windows 11 focused on translucent materials, layered depth, desktop-oriented density, and polished interaction.
+**Glassline.WinUI** is a native WinUI 3 design system for Windows 11 focused on translucent functional materials, layered depth, desktop-oriented density, and Windows-native behavior.
 
-It is designed to keep Windows behavior native while giving WinUI applications a lighter, more optical visual language. Window management, keyboard and pointer interaction, accessibility, text input, IME, DPI scaling, and system conventions remain first-class constraints rather than being replaced by a custom cross-platform renderer.
+The project keeps WinUI controls, Windows text/IME behavior, accessibility, window management, keyboard conventions, Snap/resize semantics, and the Windows compositor as first-class constraints. It changes the visual system and adds desktop shell/material primitives rather than replacing Windows with a custom cross-platform renderer.
 
-> **Early development:** Glassline is not published on NuGet yet. Buildable Theme, Controls, Effects, and Gallery projects now exist in the repository, but the design system and native-interactive validation are still being stabilized before the first preview release.
+> **Engineering preview:** buildable Theme, Controls, Effects, Gallery, research, and validation infrastructure exist in the repository. Glassline is not published on NuGet and is not release-ready. Hosted CI proves source/package contracts; native visual, accessibility, IME, DPI, input, window-behavior, and performance acceptance remains open.
 
-## Design direction
+## Implemented engineering baseline
 
-- **Functional glass, not blur everywhere.** Translucent material is reserved for chrome, navigation, overlays, popovers, and other surfaces where depth and context matter.
-- **Mica-compatible foundation.** The window base prefers the native Windows Mica system backdrop when supported and appropriate, with semantic solid fallbacks. Normal content rows, tables, and input surfaces do not become independent live glass layers.
-- **Grouped material regions.** Toolbar buttons, sidebar controls, and related glass elements should share `GlassContainer`-style material regions instead of creating a backdrop/effect pipeline per control.
-- **Layered, luminous surfaces.** Soft translucency, restrained separators, subtle edge light, and context-aware depth replace heavy borders and generic gray cards.
-- **Adaptive quality.** `Auto` selects Full, Reduced, or Solid material behavior based on accessibility, environment, and compositor capability. Expensive effects are reduced during continuous resize and nonessential animation is suppressed for inactive/background windows.
-- **Desktop-first density.** Toolbars, sidebars, inspectors, menus, settings surfaces, lists, outlines, and data-heavy layouts are first-class targets.
-- **Windows-native behavior.** Standard caption semantics, Snap, resize, system menus, keyboard conventions, accessibility, and native text input are preserved.
-- **No required custom renderer.** The core stays on WinUI 3 and Windows Composition; advanced optical refraction remains optional and experimental.
+### Theme and window foundation
 
-The material architecture is documented in [`docs/architecture/MATERIAL_ARCHITECTURE.md`](docs/architecture/MATERIAL_ARCHITECTURE.md).
+- `Glassline.WinUI.Theme` provides Light, Dark, and High Contrast semantic resources for window, group, input, sidebar, toolbar, popover, selection, text, separator, typography, spacing, and radius roles.
+- `GlasslineWindowBackdropController` uses native `Window.SystemBackdrop` with Auto/Mica/MicaAlt/Solid modes.
+- High Contrast or disabled Windows transparency effects force the Solid window foundation.
+- The semantic window surface remains the opaque fallback; Glassline does not require a transparent custom renderer.
 
-## Package layout — engineering preview
+### Shared functional material runtime
 
-The repository now contains the following buildable projects. They are not public NuGet releases yet.
+- `GlasslineGlassContainer` owns one `SystemBackdropElement` for one grouped material region rather than creating a backdrop pipeline per child control.
+- Semantic roles are Sidebar, Toolbar, Popover, Interactive, and Prominent.
+- Quality modes are Auto, Full, Reduced, and Solid.
+- The current engineering baseline resolves capable active/local/non-resizing Auto/Full to built-in Desktop Acrylic, RDP/continuous-resize/inactive windows to Reduced using MicaAlt, and accessibility/transparency-disabled environments to Solid.
+- Those built-in Full/Reduced choices are **provisional engineering baselines**, not final Glassline optical values. Custom Composition/refraction remains optional and blocked on native visual/performance evidence.
+
+### C# custom/composite controls
+
+The current Controls baseline includes:
+
+- `GlasslineSearchField`: templated C# control with a native WinUI `TextBox` as the text/selection/clipboard/keyboard/IME engine.
+- `GlasslineSegmentedControl`: templated C# control with a native WinUI `ListBox` as the single-selection/keyboard engine.
+- non-invasive wrapper `FrameworkElementAutomationPeer`s give the custom controls stable UIA class/group identity without duplicating the native TextBox/ListBox provider patterns.
+
+These controls compile and package successfully, but live Narrator/UIA, IME, DPI, visual-state, localization, and screenshot Definition-of-Done checks remain pending.
+
+### Gallery and deterministic validation scenes
+
+`Glassline.Gallery` provides stable scene IDs and AutomationIds for future native drivers:
+
+- `window-foundation`
+- `material-regions`
+- `controls-matrix`
+- `benchmark-settings` — native ListView, exactly 100 rows
+- `benchmark-grid` — native GridView, exactly 500 items
+- `benchmark-tree` — native TreeView, exactly 5000 non-root nodes
+
+The Gallery reports requested/effective window backdrop, material quality/effective mode, High Contrast, transparency-effects, RDP, active/inactive and resize state, active material-region count, and approximate material-region area. Window activation and continuous resize are propagated into the adaptive material policy.
+
+### Research infrastructure
+
+- `research/corpus-index/corpus-index.csv` contains 70 public-safe macOS 26 Tahoe scene metadata records. The repository stores metadata only; referenced screenshots are not vendored and uninspected appearance/state/component details are not guessed.
+- `research/AppleReferenceLab` is a buildable SwiftUI/AppKit macOS probe with stable scenes for buttons, toggle/slider, text input, pickers, sidebar, toolbar, menu/popover, window, and accessibility states.
+- AppleReferenceLab is compiled and tested on a GitHub-hosted macOS 26 runner. Interactive reference captures and observed measurements still require a native interactive Mac.
+- `research/measurements/measurement-ledger.csv` intentionally remains measurement-evidence work: the schema exists, but geometry/material values are not populated from uninspected screenshots or source code.
+
+## Hosted CI currently proves
+
+- repository, Theme, Controls, material, Gallery, and public-corpus static contracts;
+- deterministic material-policy, Gallery scene-selection, and benchmark-data executable smoke cases;
+- WinUI restore/build on x64 and ARM64 Windows runners;
+- NuGet pack plus .NET package validation;
+- generated package metadata/dependency-boundary checks and forbidden-asset scanning;
+- a separate WinUI consumer restoring and compiling from the generated `Glassline.WinUI.Controls` NuGet with no Glassline project reference;
+- SPDX 2.2 SBOM generation/validation for the package artifact set;
+- AppleReferenceLab Swift test and release build on macOS 26.
+
+See [`docs/engineering/ENVIRONMENT_BOUNDARY.md`](docs/engineering/ENVIRONMENT_BOUNDARY.md) for the exact evidence boundary.
+
+## What still requires native evidence
+
+The remaining high-value work is no longer mainly “can the source compile?” It is native evidence collection and measured tuning:
+
+- macOS AppleReferenceLab captures and observed measurement-ledger entries;
+- Windows Mica/material screenshot baselines in Light/Dark/High Contrast and active/inactive states;
+- live Narrator/UIA provider-tree behavior;
+- Korean, Japanese, and Simplified Chinese IME composition/candidate behavior;
+- display scale, text scale, RTL, mixed-DPI multi-monitor behavior;
+- mouse, precision touchpad, touch, Snap, system menu, maximize/restore, resize, and RDP behavior;
+- frame-time, memory, GPU, resize, and material-region measurements on agreed reference Windows hardware.
+
+Until that evidence exists, additional optical fidelity work must not be justified by guessed pixel values.
+
+## Package layout
 
 ```text
 Glassline.WinUI.Theme      XAML resources, semantic tokens, styles, and templates
-Glassline.WinUI.Controls   C# custom/composite controls and material-region primitives
-Glassline.WinUI.Effects    Optional advanced Composition/optical helpers
-Glassline.Gallery          Reference app, component gallery, and benchmark vehicle
+Glassline.WinUI.Controls   C# custom/composite controls, window/material runtime
+Glassline.WinUI.Effects    Optional advanced Composition/optical helpers; advanced path remains minimal
+Glassline.Gallery          Reference app, deterministic validation scenes, benchmark vehicle
 ```
 
-The current Controls engineering baseline includes `GlasslineSearchField` and `GlasslineSegmentedControl`. They preserve native WinUI input/selection engines and pass source, x64/ARM64 build, package, and generated-NuGet consumer compilation gates. Native interactive UIA/Narrator, IME, DPI, visual-state, and screenshot acceptance remains pending and is tracked separately; these controls should not yet be treated as release-ready.
-
-The intended usage model is to keep ordinary WinUI controls wherever possible and apply Glassline resources and components on top of them. Consumer-facing material APIs should express semantic roles such as Toolbar, Sidebar, or Popover rather than exposing raw blur/distortion constants as the main contract.
-
-## Scope
-
-The initial target is Windows 11, with x64 and ARM64 in scope. Planned coverage includes common controls, sidebars, toolbars, menus, settings layouts, search, segmented controls, desktop lists and outlines, inspectors, window chrome integration, popovers, and related interaction states.
-
-Visual fidelity is only part of the goal. Components are expected to work across keyboard, mouse, touchpad, touch, accessibility tooling, IME input, multiple DPI levels, theme changes, and effect-disabled environments.
+The intended usage model is to keep ordinary WinUI controls wherever possible and apply Glassline resources/components on top. Consumer-facing material APIs express semantic roles rather than exposing blur/distortion constants as the primary contract.
 
 ## Installation
 
-There is no public package yet. Preview installation instructions will be added when the first package is published.
+There is no public package yet. Preview installation instructions will be added when the first package is actually published and the required native acceptance evidence is available.
 
 ## Documentation
 
-Project documentation lives in [`docs/`](docs/). Contributors can start with [`CONTRIBUTING.md`](CONTRIBUTING.md). Current implementation and validation state is tracked in [`docs/STATUS.md`](docs/STATUS.md).
+Start with [`docs/STATUS.md`](docs/STATUS.md), [`docs/PROJECT_PLAN.md`](docs/PROJECT_PLAN.md), and [`docs/engineering/ENVIRONMENT_BOUNDARY.md`](docs/engineering/ENVIRONMENT_BOUNDARY.md). The full documentation map is in [`docs/README.md`](docs/README.md).
 
-## License
+## License and independence
 
-Glassline.WinUI is licensed under the [MIT License](LICENSE).
-
-## Independence
-
-Glassline.WinUI is an independent open-source project. It is not affiliated with, sponsored by, or endorsed by Microsoft or Apple. Third-party product names and trademarks are used only where necessary to describe compatibility or technical references.
+Glassline.WinUI is licensed under the [MIT License](LICENSE). It is an independent open-source project and is not affiliated with, sponsored by, or endorsed by Microsoft or Apple. Third-party names and trademarks are used only where necessary to describe compatibility or technical references.

@@ -31,6 +31,9 @@ jobs:
       - name: Validate public research corpus contract
         shell: pwsh
         run: ./eng/scripts/validate-corpus.ps1
+      - name: Validate documentation navigation links
+        shell: pwsh
+        run: ./eng/scripts/validate-doc-links.ps1
 
   material-policy-smoke:
     runs-on: windows-latest
