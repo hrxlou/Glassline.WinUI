@@ -1,3 +1,4 @@
+using Glassline.WinUI.Controls;
 using Microsoft.UI.Xaml;
 
 namespace Glassline.Gallery;
@@ -5,17 +6,20 @@ namespace Glassline.Gallery;
 public sealed partial class MainWindow : Window
 {
     private readonly string[] viewModes = ["General", "Appearance", "Advanced"];
+    private readonly GlasslineWindowBackdropController backdropController;
 
     public MainWindow()
     {
         InitializeComponent();
+
+        backdropController = new GlasslineWindowBackdropController(this);
 
         SegmentedControl.ItemsSource = viewModes;
         SegmentedControl.SelectedIndex = 0;
         SelectionStatus.Text = $"Selected: {viewModes[0]}";
 
         SegmentedControl.RegisterPropertyChangedCallback(
-            Glassline.WinUI.Controls.GlasslineSegmentedControl.SelectedIndexProperty,
+            GlasslineSegmentedControl.SelectedIndexProperty,
             (_, _) => UpdateSelectionStatus());
     }
 
