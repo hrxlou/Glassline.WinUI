@@ -7,7 +7,7 @@
 
 It is designed to keep Windows behavior native while giving WinUI applications a lighter, more optical visual language. Window management, keyboard and pointer interaction, accessibility, text input, IME, DPI scaling, and system conventions remain first-class constraints rather than being replaced by a custom cross-platform renderer.
 
-> **Early development:** Glassline is not published on NuGet yet. The design system and package boundaries are being stabilized before the first preview release.
+> **Early development:** Glassline is not published on NuGet yet. Buildable Theme, Controls, Effects, and Gallery projects now exist in the repository, but the design system and native-interactive validation are still being stabilized before the first preview release.
 
 ## Design direction
 
@@ -22,14 +22,18 @@ It is designed to keep Windows behavior native while giving WinUI applications a
 
 The material architecture is documented in [`docs/architecture/MATERIAL_ARCHITECTURE.md`](docs/architecture/MATERIAL_ARCHITECTURE.md).
 
-## Planned packages
+## Package layout — engineering preview
+
+The repository now contains the following buildable projects. They are not public NuGet releases yet.
 
 ```text
 Glassline.WinUI.Theme      XAML resources, semantic tokens, styles, and templates
-Glassline.WinUI.Controls   Desktop-oriented composite controls and material-region primitives
+Glassline.WinUI.Controls   C# custom/composite controls and material-region primitives
 Glassline.WinUI.Effects    Optional advanced Composition/optical helpers
 Glassline.Gallery          Reference app, component gallery, and benchmark vehicle
 ```
+
+The current Controls engineering baseline includes `GlasslineSearchField` and `GlasslineSegmentedControl`. They preserve native WinUI input/selection engines and pass source, x64/ARM64 build, package, and generated-NuGet consumer compilation gates. Native interactive UIA/Narrator, IME, DPI, visual-state, and screenshot acceptance remains pending and is tracked separately; these controls should not yet be treated as release-ready.
 
 The intended usage model is to keep ordinary WinUI controls wherever possible and apply Glassline resources and components on top of them. Consumer-facing material APIs should express semantic roles such as Toolbar, Sidebar, or Popover rather than exposing raw blur/distortion constants as the main contract.
 
@@ -45,7 +49,7 @@ There is no public package yet. Preview installation instructions will be added 
 
 ## Documentation
 
-Project documentation lives in [`docs/`](docs/). Contributors can start with [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Project documentation lives in [`docs/`](docs/). Contributors can start with [`CONTRIBUTING.md`](CONTRIBUTING.md). Current implementation and validation state is tracked in [`docs/STATUS.md`](docs/STATUS.md).
 
 ## License
 
