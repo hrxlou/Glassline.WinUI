@@ -73,7 +73,18 @@ jobs:
         shell: pwsh
         run: |
           $packageSource = (Resolve-Path artifacts/packages).Path
-          dotnet restore tests/Glassline.PackageSmoke/Glassline.PackageSmoke.csproj -p:Platform=x64 --source $packageSource --source https://api.nuget.org/v3/index.json
+          $nugetConfig = Join-Path $env:RUNNER_TEMP 'Glassline.PackageSmoke.NuGet.config'
+          @"
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <packageSources>
+              <clear />
+              <add key="glassline-local" value="$packageSource" />
+              <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+            </packageSources>
+          </configuration>
+          "@ | Set-Content -Path $nugetConfig -Encoding utf8
+          dotnet restore tests/Glassline.PackageSmoke/Glassline.PackageSmoke.csproj -p:Platform=x64 --configfile $nugetConfig
           dotnet build tests/Glassline.PackageSmoke/Glassline.PackageSmoke.csproj -c Release -p:Platform=x64 --no-restore
       - uses: actions/upload-artifact@v4
         with:
