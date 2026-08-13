@@ -1,0 +1,30 @@
+name: AppleReferenceLab macOS
+
+on:
+  pull_request:
+    paths:
+      - 'research/AppleReferenceLab/**'
+      - '.github/workflows/reference-lab-macos.yml'
+  push:
+    branches: [ main ]
+    paths:
+      - 'research/AppleReferenceLab/**'
+      - '.github/workflows/reference-lab-macos.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain
+        run: |
+          sw_vers
+          xcodebuild -version
+          swift --version
+      - name: Test scene catalog and deterministic selection
+        run: swift test --package-path research/AppleReferenceLab -c release
+      - name: Build native probe executable
+        run: swift build --package-path research/AppleReferenceLab -c release

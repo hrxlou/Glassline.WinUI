@@ -1,0 +1,370 @@
+import AppKit
+import ReferenceLabCore
+import SwiftUI
+
+@main
+@MainActor
+struct AppleReferenceLabApp: App {
+    @State private var selectedScene: ReferenceScene
+
+    init() {
+        let initial = ReferenceSceneSelection.resolve(
+            arguments: ProcessInfo.processInfo.arguments,
+            environmentValue: ProcessInfo.processInfo.environment[ReferenceSceneSelection.environmentVariable]
+        )
+        _selectedScene = State(initialValue: initial)
+    }
+
+    var body: some Scene {
+        WindowGroup("AppleReferenceLab") {
+            ReferenceLabRootView(selectedScene: $selectedScene)
+                .frame(minWidth: 920, minHeight: 640)
+        }
+        .defaultSize(width: 1040, height: 760)
+    }
+}
+
+@MainActor
+private struct ReferenceLabRootView: View {
+    @Binding var selectedScene: ReferenceScene
+
+    var body: some View {
+        NavigationSplitView {
+            List(ReferenceScene.allCases, selection: $selectedScene) { scene in
+                Text(scene.title)
+                    .tag(scene)
+                    .accessibilityIdentifier("ReferenceScene.\(scene.rawValue)")
+            }
+            .navigationTitle("Reference Scenes")
+        } detail: {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    ReferenceHeader(scene: selectedScene)
+                    sceneView(selectedScene)
+                }
+                .padding(28)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .navigationTitle(selectedScene.title)
+        }
+    }
+
+    @ViewBuilder
+    private func sceneView(_ scene: ReferenceScene) -> some View {
+        switch scene {
+        case .buttons:
+            ButtonsProbeScene()
+        case .toggleSlider:
+            ToggleSliderProbeScene()
+        case .textInput:
+            TextInputProbeScene()
+        case .pickers:
+            PickersProbeScene()
+        case .sidebar:
+            SidebarProbeScene()
+        case .toolbar:
+            ToolbarProbeScene()
+        case .menuPopover:
+            MenuPopoverProbeScene()
+        case .window:
+            WindowProbeScene()
+        case .accessibilityStates:
+            AccessibilityProbeScene()
+        }
+    }
+}
+
+private struct ReferenceHeader: View {
+    let scene: ReferenceScene
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(scene.title)
+                .font(.title2)
+            Text("scene_id=\(scene.rawValue)")
+                .font(.caption.monospaced())
+                .textSelection(.enabled)
+            Text(ProcessInfo.processInfo.operatingSystemVersionString)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+}
+
+private struct ProbeSection<Content: View>: View {
+    let title: String
+    @ViewBuilder let content: Content
+
+    init(_ title: String, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.content = content()
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(title)
+                .font(.headline)
+            content
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+private struct ButtonsProbeScene: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 22) {
+            ProbeSection("SwiftUI") {
+                HStack(spacing: 12) {
+                    Button("Default") {}
+                    Button("Bordered") {}
+                        .buttonStyle(.bordered)
+                    Button("Prominent") {}
+                        .buttonStyle(.borderedProminent)
+                    Button("Disabled") {}
+                        .disabled(true)
+                }
+                ControlSizeRow { Button("Mini") {} }
+            }
+            ProbeSection("AppKit") {
+                AppKitButtonProbe(title: "NSButton")
+                    .frame(width: 160, height: 32)
+            }
+        }
+    }
+}
+
+private struct ControlSizeRow<Content: View>: View {
+    @ViewBuilder let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            content.controlSize(.mini)
+            content.controlSize(.small)
+            content.controlSize(.regular)
+            content.controlSize(.large)
+        }
+    }
+}
+
+private struct ToggleSliderProbeScene: View {
+    @State private var enabled = true
+    @State private var value = 0.55
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 22) {
+            ProbeSection("SwiftUI") {
+                Toggle("Enabled", isOn: $enabled)
+                    .frame(width: 260, alignment: .leading)
+                Slider(value: $value)
+                    .frame(width: 320)
+            }
+            ProbeSection("AppKit") {
+                AppKitSwitchProbe()
+                    .frame(width: 180, height: 28)
+                AppKitSliderProbe()
+                    .frame(width: 320, height: 28)
+            }
+        }
+    }
+}
+
+private struct TextInputProbeScene: View {
+    @State private var text = "Reference text"
+    @State private var password = "password"
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 22) {
+            ProbeSection("SwiftUI") {
+                TextField("Placeholder", text: $text)
+                    .frame(width: 340)
+                SecureField("Password", text: $password)
+                    .frame(width: 340)
+                TextField("Disabled", text: .constant("Disabled"))
+                    .frame(width: 340)
+                    .disabled(true)
+            }
+            ProbeSection("AppKit") {
+                AppKitTextFieldProbe(text: "NSTextField")
+                    .frame(width: 340, height: 28)
+            }
+        }
+    }
+}
+
+private struct PickersProbeScene: View {
+    @State private var selection = 1
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 22) {
+            Picker("Menu Picker", selection: $selection) {
+                Text("One").tag(0)
+                Text("Two").tag(1)
+                Text("Three").tag(2)
+            }
+            .frame(width: 300)
+
+            Picker("Segmented", selection: $selection) {
+                Text("One").tag(0)
+                Text("Two").tag(1)
+                Text("Three").tag(2)
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 360)
+
+            Picker("Radio", selection: $selection) {
+                Text("One").tag(0)
+                Text("Two").tag(1)
+                Text("Three").tag(2)
+            }
+            .pickerStyle(.radioGroup)
+            .frame(width: 300)
+        }
+    }
+}
+
+private struct SidebarProbeScene: View {
+    @State private var selection = "Components"
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 20) {
+            List(selection: $selection) {
+                Section("Library") {
+                    Text("Overview").tag("Overview")
+                    Text("Components").tag("Components")
+                    Text("Diagnostics").tag("Diagnostics")
+                }
+            }
+            .listStyle(.sidebar)
+            .frame(width: 240, height: 360)
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text(selection)
+                    .font(.title3)
+                Text("Sidebar selection probe")
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+}
+
+private struct ToolbarProbeScene: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Toolbar items are attached to this scene's detail view using the native SwiftUI toolbar API.")
+                .frame(maxWidth: 520, alignment: .leading)
+            Text("Capture both active and inactive window states.")
+                .foregroundStyle(.secondary)
+        }
+        .toolbar {
+            ToolbarItemGroup {
+                Button("Back") {}
+                Button("Forward") {}
+                Button("Share") {}
+            }
+        }
+    }
+}
+
+private struct MenuPopoverProbeScene: View {
+    @State private var showingPopover = false
+
+    var body: some View {
+        HStack(spacing: 16) {
+            Menu("Menu") {
+                Button("First") {}
+                Button("Second") {}
+                Divider()
+                Button("Disabled") {}
+                    .disabled(true)
+            }
+
+            Button("Show Popover") {
+                showingPopover.toggle()
+            }
+            .popover(isPresented: $showingPopover) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Popover")
+                        .font(.headline)
+                    Text("Native SwiftUI popover content")
+                }
+                .padding(18)
+            }
+        }
+    }
+}
+
+private struct WindowProbeScene: View {
+    var body: some View {
+        Form {
+            LabeledContent("Window", value: "Primary probe window")
+            LabeledContent("Scene ID", value: ReferenceScene.window.rawValue)
+            LabeledContent("Capture", value: "Active + inactive; resized variants")
+        }
+        .formStyle(.grouped)
+        .frame(maxWidth: 560)
+    }
+}
+
+private struct AccessibilityProbeScene: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.accessibilityDifferentiateWithoutColor) private var differentiateWithoutColor
+    @Environment(\.colorSchemeContrast) private var contrast
+
+    var body: some View {
+        Form {
+            LabeledContent("Reduce Motion", value: String(reduceMotion))
+            LabeledContent("Reduce Transparency", value: String(reduceTransparency))
+            LabeledContent("Differentiate Without Color", value: String(differentiateWithoutColor))
+            LabeledContent("Color Scheme Contrast", value: String(describing: contrast))
+        }
+        .formStyle(.grouped)
+        .frame(maxWidth: 560)
+    }
+}
+
+private struct AppKitButtonProbe: NSViewRepresentable {
+    let title: String
+
+    func makeNSView(context: Context) -> NSButton {
+        NSButton(title: title, target: nil, action: nil)
+    }
+
+    func updateNSView(_ nsView: NSButton, context: Context) {
+        nsView.title = title
+    }
+}
+
+private struct AppKitSwitchProbe: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSButton {
+        let button = NSButton(checkboxWithTitle: "NSButton switch", target: nil, action: nil)
+        button.state = .on
+        return button
+    }
+
+    func updateNSView(_ nsView: NSButton, context: Context) {}
+}
+
+private struct AppKitSliderProbe: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSSlider {
+        NSSlider(value: 0.55, minValue: 0, maxValue: 1, target: nil, action: nil)
+    }
+
+    func updateNSView(_ nsView: NSSlider, context: Context) {}
+}
+
+private struct AppKitTextFieldProbe: NSViewRepresentable {
+    let text: String
+
+    func makeNSView(context: Context) -> NSTextField {
+        NSTextField(string: text)
+    }
+
+    func updateNSView(_ nsView: NSTextField, context: Context) {
+        nsView.stringValue = text
+    }
+}
