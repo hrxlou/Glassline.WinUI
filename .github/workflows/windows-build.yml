@@ -75,7 +75,7 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-      - name: Pack shipping libraries
+      - name: Pack shipping libraries with package validation
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force artifacts/packages | Out-Null
@@ -95,6 +95,9 @@ jobs:
               }
             }
           }
+      - name: Validate generated NuGet metadata and dependency boundaries
+        shell: pwsh
+        run: ./eng/scripts/validate-package-metadata.ps1 -PackageDirectory artifacts/packages
       - name: Build NuGet package consumer smoke app
         shell: pwsh
         run: |
@@ -112,7 +115,26 @@ jobs:
           "@ | Set-Content -Path $nugetConfig -Encoding utf8
           dotnet restore tests/Glassline.PackageSmoke/Glassline.PackageSmoke.csproj -p:Platform=x64 --configfile $nugetConfig
           dotnet build tests/Glassline.PackageSmoke/Glassline.PackageSmoke.csproj -c Release -p:Platform=x64 --no-restore
+      - name: Generate and validate SPDX SBOM
+        shell: pwsh
+        run: |
+          $drop = Join-Path $PWD 'artifacts/sbom-drop'
+          $validationDir = Join-Path $PWD 'artifacts/sbom-validation'
+          New-Item -ItemType Directory -Force $drop | Out-Null
+          New-Item -ItemType Directory -Force $validationDir | Out-Null
+          Copy-Item artifacts/packages/*.nupkg $drop
+          Copy-Item LICENSE $drop
+          Copy-Item THIRD-PARTY-NOTICES $drop
+
+          $toolDir = Join-Path $env:RUNNER_TEMP 'glassline-sbom-tool'
+          dotnet tool install Microsoft.Sbom.DotNetTool --version 4.1.5 --tool-path $toolDir
+          $sbomTool = Join-Path $toolDir 'sbom-tool.exe'
+          & $sbomTool generate -b $drop -bc $PWD -pn Glassline.WinUI -pv 0.1.0-preview.1 -ps 'Glassline.WinUI contributors' -nsb 'https://github.com/hrxlou/Glassline.WinUI/sbom'
+          & $sbomTool validate -b $drop -o (Join-Path $validationDir 'result.json') -mi SPDX:2.2
       - uses: actions/upload-artifact@v4
         with:
-          name: nuget-packages
-          path: artifacts/packages/*.nupkg
+          name: nuget-packages-and-sbom
+          path: |
+            artifacts/packages/*.nupkg
+            artifacts/sbom-drop/_manifest/**
+            artifacts/sbom-validation/**
