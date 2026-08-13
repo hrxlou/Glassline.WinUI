@@ -34,12 +34,6 @@ public sealed class GlasslineGlassContainer : ContentControl
         typeof(GlasslineGlassContainer),
         new PropertyMetadata(false, OnEnvironmentPropertyChanged));
 
-    public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
-        nameof(CornerRadius),
-        typeof(CornerRadius),
-        typeof(GlasslineGlassContainer),
-        new PropertyMetadata(new CornerRadius(12)));
-
     private SystemBackdropElement? backdropElement;
     private GlasslineMaterialCapabilities? capabilities;
     private GlasslineMaterialMode effectiveMode = GlasslineMaterialMode.Solid;
@@ -75,12 +69,6 @@ public sealed class GlasslineGlassContainer : ContentControl
     {
         get => (bool)GetValue(IsResizingProperty);
         set => SetValue(IsResizingProperty, value);
-    }
-
-    public CornerRadius CornerRadius
-    {
-        get => (CornerRadius)GetValue(CornerRadiusProperty);
-        set => SetValue(CornerRadiusProperty, value);
     }
 
     public GlasslineMaterialMode EffectiveMode => effectiveMode;
