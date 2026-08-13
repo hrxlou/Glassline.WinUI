@@ -88,6 +88,65 @@ public enum CaptureMatrix {
         ReferenceScene.allCases.flatMap(required(for:))
     }
 
+    /// Resolves the accessibility variant a live environment corresponds to.
+    ///
+    /// Returns `nil` when the environment is not one of the required variants, so the probe can say
+    /// so on screen instead of letting an operator name a capture after a mode it was not taken in.
+    public static func accessibilityMode(
+        reduceTransparency: Bool,
+        increaseContrast: Bool
+    ) -> CaptureAccessibilityMode? {
+        switch (reduceTransparency, increaseContrast) {
+        case (false, false):
+            return .standard
+        case (true, false):
+            return .reduceTransparency
+        case (false, true):
+            return .increaseContrast
+        case (true, true):
+            // Both settings on is a real macOS state, but it is not one of the isolated variants
+            // the matrix requires, so no capture id describes it.
+            return nil
+        }
+    }
+
+    /// The capture this live environment would satisfy, or `nil` if it satisfies none.
+    public static func descriptor(
+        scene: ReferenceScene,
+        appearance: CaptureAppearance,
+        windowState: CaptureWindowState,
+        reduceTransparency: Bool,
+        increaseContrast: Bool
+    ) -> CaptureDescriptor? {
+        guard let mode = accessibilityMode(
+            reduceTransparency: reduceTransparency,
+            increaseContrast: increaseContrast
+        ) else {
+            return nil
+        }
+
+        // Accessibility variants are only required for the active window.
+        if mode != .standard, windowState != .active {
+            return nil
+        }
+
+        return CaptureDescriptor(
+            scene: scene,
+            appearance: appearance,
+            windowState: windowState,
+            accessibilityMode: mode
+        )
+    }
+
+    /// Reference captures are taken at 2x. At 1x a 6 pt radius is 6 px, so antialiasing alone puts
+    /// edge determination outside any useful tolerance, and macOS renders hairlines and materials
+    /// differently at 1x than at the scale the design is consumed at.
+    public static let requiredBackingScale: Double = 2
+
+    public static func isUsableForGeometry(backingScale: Double) -> Bool {
+        backingScale >= requiredBackingScale
+    }
+
     public static var manifestCSV: String {
         let rows = all.map { descriptor in
             [

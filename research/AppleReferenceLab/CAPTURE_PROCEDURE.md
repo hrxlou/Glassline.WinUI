@@ -1,6 +1,11 @@
 # AppleReferenceLab Capture Procedure
 
-Status: **procedure defined; no captures taken yet**.
+Status: **procedure defined; first session on 2026-08-14 produced structural reference only**.
+
+A 2026-08-14 session captured all 9 scenes but at 1x, with the window inactive in every capture and
+from a build that predated the calibration rule. Those captures confirm the probe renders correctly
+on real hardware; none of them can support a geometry row. The preconditions below exist because of
+that session.
 
 This is the operating procedure for an interactive macOS 26 reference session. It exists because the
 capture matrix was previously prose. Prose produces a different set of screenshots every session and
@@ -24,6 +29,34 @@ Per scene, per appearance (Light and Dark):
 
 Inactive-window evidence is required once per appearance. The accessibility variants isolate material
 and contrast response, which window activation does not change.
+
+## Preconditions
+
+A session that violates any of these produces captures that cannot support `Observed` rows. The
+probe checks the first one and refuses silently on none of them, so check before you start.
+
+1. **Retina, 2x or better.** The header prints `backing_scale` and shows a red warning below 2x.
+   At 1x a 6 pt radius is 6 px, so antialiasing alone puts edge determination outside any useful
+   tolerance, and macOS renders hairlines and materials differently than at the scale the design is
+   actually consumed at. A 1x capture is structural reference material only.
+2. **The probe keeps key focus during capture.** A screenshot tool that takes focus makes every
+   capture report `window=inactive`, and the active-window baseline — which the geometry rows depend
+   on — becomes unreachable. Use a method that leaves the app key, then verify against the header.
+3. **The build comes from `main`.** A capture from a local build is not reproducible, which is
+   itself a disqualifying provenance gap regardless of image quality.
+
+## Reading the capture id off the screen
+
+The header resolves the live environment to a `capture_id` and prints it. Name the file after what
+the header shows, never after what you intended to set. If the header shows
+
+```
+capture_id=NONE — this environment matches no required capture; do not name a file from it
+```
+
+the environment is not one of the required variants — most often both Reduce Transparency and
+Increase Contrast are on, since the matrix isolates them. Fix the setting and re-check before
+capturing.
 
 ## Machine record
 
@@ -70,7 +103,9 @@ mode was actually active rather than which one was intended.
 
 ## Naming and storage
 
-Name each file `<capture_id>.png`, matching `capture-manifest.csv` exactly. Captures are research
+Name each file `<capture_id>.png`, matching the id printed in the header and listed in
+`capture-manifest.csv` exactly. Do not add a date or session prefix; the session is recorded in the
+machine record, and a prefix breaks the join between a ledger `source_id` and the manifest. Captures are research
 material and are **not** committed: they are not redistributable, and the repository ships no Apple
 screenshots. Keep them in a session directory outside the repository and cite the `capture_id` in the
 ledger.
