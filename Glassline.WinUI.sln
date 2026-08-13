@@ -1,0 +1,54 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glassline.WinUI.Theme", "src\Glassline.WinUI.Theme\Glassline.WinUI.Theme.csproj", "{4D2C2CB5-EBF4-4C3D-902A-5C4863D09E6B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glassline.WinUI.Controls", "src\Glassline.WinUI.Controls\Glassline.WinUI.Controls.csproj", "{F2FB62E8-E61A-41E5-BF82-AAD3B60D6862}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glassline.WinUI.Effects", "src\Glassline.WinUI.Effects\Glassline.WinUI.Effects.csproj", "{4D4A1B81-02CB-49C4-B17D-17B5E5199191}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glassline.Gallery", "samples\Glassline.Gallery\Glassline.Gallery.csproj", "{29EDAA9A-2878-428D-8DA5-1270D8942729}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|ARM64 = Debug|ARM64
+		Release|x64 = Release|x64
+		Release|ARM64 = Release|ARM64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4D2C2CB5-EBF4-4C3D-902A-5C4863D09E6B}.Debug|x64.ActiveCfg = Debug|x64
+		{4D2C2CB5-EBF4-4C3D-902A-5C4863D09E6B}.Debug|x64.Build.0 = Debug|x64
+		{4D2C2CB5-EBF4-4C3D-902A-5C4863D09E6B}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{4D2C2CB5-EBF4-4C3D-902A-5C4863D09E6B}.Debug|ARM64.Build.0 = Debug|ARM64
+		{4D2C2CB5-EBF4-4C3D-902A-5C4863D09E6B}.Release|x64.ActiveCfg = Release|x64
+		{4D2C2CB5-EBF4-4C3D-902A-5C4863D09E6B}.Release|x64.Build.0 = Release|x64
+		{4D2C2CB5-EBF4-4C3D-902A-5C4863D09E6B}.Release|ARM64.ActiveCfg = Release|ARM64
+		{4D2C2CB5-EBF4-4C3D-902A-5C4863D09E6B}.Release|ARM64.Build.0 = Release|ARM64
+		{F2FB62E8-E61A-41E5-BF82-AAD3B60D6862}.Debug|x64.ActiveCfg = Debug|x64
+		{F2FB62E8-E61A-41E5-BF82-AAD3B60D6862}.Debug|x64.Build.0 = Debug|x64
+		{F2FB62E8-E61A-41E5-BF82-AAD3B60D6862}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{F2FB62E8-E61A-41E5-BF82-AAD3B60D6862}.Debug|ARM64.Build.0 = Debug|ARM64
+		{F2FB62E8-E61A-41E5-BF82-AAD3B60D6862}.Release|x64.ActiveCfg = Release|x64
+		{F2FB62E8-E61A-41E5-BF82-AAD3B60D6862}.Release|x64.Build.0 = Release|x64
+		{F2FB62E8-E61A-41E5-BF82-AAD3B60D6862}.Release|ARM64.ActiveCfg = Release|ARM64
+		{F2FB62E8-E61A-41E5-BF82-AAD3B60D6862}.Release|ARM64.Build.0 = Release|ARM64
+		{4D4A1B81-02CB-49C4-B17D-17B5E5199191}.Debug|x64.ActiveCfg = Debug|x64
+		{4D4A1B81-02CB-49C4-B17D-17B5E5199191}.Debug|x64.Build.0 = Debug|x64
+		{4D4A1B81-02CB-49C4-B17D-17B5E5199191}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{4D4A1B81-02CB-49C4-B17D-17B5E5199191}.Debug|ARM64.Build.0 = Debug|ARM64
+		{4D4A1B81-02CB-49C4-B17D-17B5E5199191}.Release|x64.ActiveCfg = Release|x64
+		{4D4A1B81-02CB-49C4-B17D-17B5E5199191}.Release|x64.Build.0 = Release|x64
+		{4D4A1B81-02CB-49C4-B17D-17B5E5199191}.Release|ARM64.ActiveCfg = Release|ARM64
+		{4D4A1B81-02CB-49C4-B17D-17B5E5199191}.Release|ARM64.Build.0 = Release|ARM64
+		{29EDAA9A-2878-428D-8DA5-1270D8942729}.Debug|x64.ActiveCfg = Debug|x64
+		{29EDAA9A-2878-428D-8DA5-1270D8942729}.Debug|x64.Build.0 = Debug|x64
+		{29EDAA9A-2878-428D-8DA5-1270D8942729}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{29EDAA9A-2878-428D-8DA5-1270D8942729}.Debug|ARM64.Build.0 = Debug|ARM64
+		{29EDAA9A-2878-428D-8DA5-1270D8942729}.Release|x64.ActiveCfg = Release|x64
+		{29EDAA9A-2878-428D-8DA5-1270D8942729}.Release|x64.Build.0 = Release|x64
+		{29EDAA9A-2878-428D-8DA5-1270D8942729}.Release|ARM64.ActiveCfg = Release|ARM64
+		{29EDAA9A-2878-428D-8DA5-1270D8942729}.Release|ARM64.Build.0 = Release|ARM64
+	EndGlobalSection
+EndGlobal
