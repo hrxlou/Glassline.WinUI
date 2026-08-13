@@ -54,7 +54,6 @@ Use these documents as the current source of truth for Glassline.WinUI.
 
 - [`legal/IP_AND_DISTRIBUTION.md`](legal/IP_AND_DISTRIBUTION.md) — public/private asset and distribution policy.
 - [`legal/TRADEMARKS.md`](legal/TRADEMARKS.md) — trademark and non-affiliation guidance.
-- [`../SOURCE_PROVENANCE.md`](../SOURCE_PROVENANCE.md) — source-blueprint provenance record.
 - [`../THIRD-PARTY-NOTICES`](../THIRD-PARTY-NOTICES) — third-party notices.
 - [`../LICENSE`](../LICENSE) — MIT license.
 
