@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <UseWinUI>true</UseWinUI>
+    <RootNamespace>Glassline.WinUI.Theme</RootNamespace>
+    <AssemblyName>Glassline.WinUI.Theme</AssemblyName>
+    <IsPackable>true</IsPackable>
+    <PackageId>Glassline.WinUI.Theme</PackageId>
+    <Version>0.1.0-preview.1</Version>
+    <Description>Semantic WinUI 3 theme resources for Glassline.WinUI.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" />
+  </ItemGroup>
+</Project>

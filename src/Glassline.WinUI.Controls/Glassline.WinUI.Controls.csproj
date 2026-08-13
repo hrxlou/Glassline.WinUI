@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <UseWinUI>true</UseWinUI>
+    <RootNamespace>Glassline.WinUI.Controls</RootNamespace>
+    <AssemblyName>Glassline.WinUI.Controls</AssemblyName>
+    <IsPackable>true</IsPackable>
+    <PackageId>Glassline.WinUI.Controls</PackageId>
+    <Version>0.1.0-preview.1</Version>
+    <Description>C# custom and composite WinUI 3 controls for Glassline.WinUI.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Glassline.WinUI.Theme\Glassline.WinUI.Theme.csproj" />
+  </ItemGroup>
+</Project>
