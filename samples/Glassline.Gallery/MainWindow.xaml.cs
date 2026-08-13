@@ -2,6 +2,7 @@ using Glassline.WinUI.Controls;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Glassline.Gallery;
 
@@ -46,6 +47,7 @@ public sealed partial class MainWindow : Window
             (_, _) => UpdateSelectionStatus());
 
         ApplyRequestedScene();
+        InitializeBenchmarkScene();
         UpdateWindowFoundationFallback();
         ApplyMaterialWindowState();
         UpdateDiagnostics();
@@ -65,6 +67,45 @@ public sealed partial class MainWindow : Window
         SceneControlsMatrix.Visibility = GallerySceneIds.IsSceneVisible(requestedScene, GallerySceneIds.ControlsMatrix)
             ? Visibility.Visible
             : Visibility.Collapsed;
+        SceneBenchmarkSettings.Visibility = GallerySceneIds.IsSceneVisible(requestedScene, GallerySceneIds.BenchmarkSettings)
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+        SceneBenchmarkGrid.Visibility = GallerySceneIds.IsSceneVisible(requestedScene, GallerySceneIds.BenchmarkGrid)
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+        SceneBenchmarkTree.Visibility = GallerySceneIds.IsSceneVisible(requestedScene, GallerySceneIds.BenchmarkTree)
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+    }
+
+    private void InitializeBenchmarkScene()
+    {
+        switch (requestedScene)
+        {
+            case GallerySceneIds.BenchmarkSettings:
+                SettingsBenchmarkList.ItemsSource = GalleryBenchmarkData.CreateSettingsRows();
+                break;
+            case GallerySceneIds.BenchmarkGrid:
+                GridBenchmark.ItemsSource = GalleryBenchmarkData.CreateGridItems();
+                break;
+            case GallerySceneIds.BenchmarkTree:
+                foreach (TreeBenchmarkBranch branch in GalleryBenchmarkData.CreateTreeBranches())
+                {
+                    var root = new TreeViewNode
+                    {
+                        Content = branch.Title,
+                        IsExpanded = true,
+                    };
+
+                    foreach (TreeBenchmarkLeaf leaf in branch.Children)
+                    {
+                        root.Children.Add(new TreeViewNode { Content = leaf.Title });
+                    }
+
+                    TreeBenchmark.RootNodes.Add(root);
+                }
+                break;
+        }
     }
 
     private void ApplyMaterialWindowState()

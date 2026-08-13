@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Glassline.BenchmarkDataSmoke</RootNamespace>
+    <AssemblyName>Glassline.BenchmarkDataSmoke</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\samples\Glassline.Gallery\GalleryBenchmarkData.cs" Link="GalleryBenchmarkData.cs" />
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+</Project>

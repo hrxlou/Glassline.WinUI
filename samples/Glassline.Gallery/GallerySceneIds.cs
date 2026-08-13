@@ -6,6 +6,9 @@ public static class GallerySceneIds
     public const string WindowFoundation = "window-foundation";
     public const string MaterialRegions = "material-regions";
     public const string ControlsMatrix = "controls-matrix";
+    public const string BenchmarkSettings = "benchmark-settings";
+    public const string BenchmarkGrid = "benchmark-grid";
+    public const string BenchmarkTree = "benchmark-tree";
 
     public static string ResolveRequestedScene(IEnumerable<string> args, string? environmentValue)
     {
@@ -21,8 +24,12 @@ public static class GallerySceneIds
         return Normalize(environmentValue);
     }
 
+    public static bool IsBenchmarkScene(string sceneId) =>
+        sceneId is BenchmarkSettings or BenchmarkGrid or BenchmarkTree;
+
     public static bool IsSceneVisible(string requestedScene, string sceneId) =>
-        requestedScene == All || string.Equals(requestedScene, sceneId, StringComparison.OrdinalIgnoreCase);
+        string.Equals(requestedScene, sceneId, StringComparison.OrdinalIgnoreCase) ||
+        (requestedScene == All && !IsBenchmarkScene(sceneId));
 
     public static string Normalize(string? value)
     {
@@ -32,6 +39,9 @@ public static class GallerySceneIds
             WindowFoundation => WindowFoundation,
             MaterialRegions => MaterialRegions,
             ControlsMatrix => ControlsMatrix,
+            BenchmarkSettings => BenchmarkSettings,
+            BenchmarkGrid => BenchmarkGrid,
+            BenchmarkTree => BenchmarkTree,
             All => All,
             _ => All,
         };

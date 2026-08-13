@@ -105,6 +105,48 @@
                         <TextBlock x:Name="SelectionStatus" Style="{StaticResource Glassline.CaptionTextStyle}" />
                     </StackPanel>
                 </Border>
+
+                <Border
+                    x:Name="SceneBenchmarkSettings"
+                    Padding="16"
+                    Background="{ThemeResource Glassline.Surface.Group}"
+                    CornerRadius="{StaticResource Glassline.Radius.Group}"
+                    AutomationProperties.AutomationId="Scene.BenchmarkSettings"
+                    Visibility="Collapsed">
+                    <StackPanel Spacing="12">
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Benchmark — Settings 100 rows" />
+                        <TextBlock Style="{StaticResource Glassline.CaptionTextStyle}" Text="Deterministic native ListView workload. Capture performance only on the native Windows benchmark lane." TextWrapping="Wrap" />
+                        <ListView x:Name="SettingsBenchmarkList" Height="560" AutomationProperties.AutomationId="Benchmark.Settings.List" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    x:Name="SceneBenchmarkGrid"
+                    Padding="16"
+                    Background="{ThemeResource Glassline.Surface.Group}"
+                    CornerRadius="{StaticResource Glassline.Radius.Group}"
+                    AutomationProperties.AutomationId="Scene.BenchmarkGrid"
+                    Visibility="Collapsed">
+                    <StackPanel Spacing="12">
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Benchmark — Productivity grid 500 items" />
+                        <TextBlock Style="{StaticResource Glassline.CaptionTextStyle}" Text="Deterministic native GridView workload." />
+                        <GridView x:Name="GridBenchmark" Height="560" AutomationProperties.AutomationId="Benchmark.Grid.Items" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    x:Name="SceneBenchmarkTree"
+                    Padding="16"
+                    Background="{ThemeResource Glassline.Surface.Group}"
+                    CornerRadius="{StaticResource Glassline.Radius.Group}"
+                    AutomationProperties.AutomationId="Scene.BenchmarkTree"
+                    Visibility="Collapsed">
+                    <StackPanel Spacing="12">
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Benchmark — Tree 5k nodes" />
+                        <TextBlock Style="{StaticResource Glassline.CaptionTextStyle}" Text="100 roots × 50 children = 5000 non-root nodes." />
+                        <TreeView x:Name="TreeBenchmark" Height="560" AutomationProperties.AutomationId="Benchmark.Tree.Nodes" />
+                    </StackPanel>
+                </Border>
             </StackPanel>
         </ScrollViewer>
     </Grid>
