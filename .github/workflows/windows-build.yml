@@ -28,6 +28,9 @@ jobs:
       - name: Validate Gallery deterministic contract
         shell: pwsh
         run: ./eng/scripts/validate-gallery.ps1
+      - name: Validate public research corpus contract
+        shell: pwsh
+        run: ./eng/scripts/validate-corpus.ps1
 
   material-policy-smoke:
     runs-on: windows-latest
