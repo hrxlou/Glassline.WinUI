@@ -13,6 +13,8 @@ public sealed partial class MainWindow : Window
         InitializeComponent();
 
         backdropController = new GlasslineWindowBackdropController(this);
+        backdropController.EffectiveKindChanged += OnBackdropEffectiveKindChanged;
+        UpdateWindowFoundationFallback();
 
         SegmentedControl.ItemsSource = viewModes;
         SegmentedControl.SelectedIndex = 0;
@@ -29,5 +31,14 @@ public sealed partial class MainWindow : Window
         SelectionStatus.Text = index >= 0 && index < viewModes.Length
             ? $"Selected: {viewModes[index]}"
             : "No selection";
+    }
+
+    private void OnBackdropEffectiveKindChanged(object? sender, EventArgs e) => UpdateWindowFoundationFallback();
+
+    private void UpdateWindowFoundationFallback()
+    {
+        WindowSolidFallback.Visibility = backdropController.EffectiveKind == GlasslineWindowBackdropKind.Solid
+            ? Visibility.Visible
+            : Visibility.Collapsed;
     }
 }

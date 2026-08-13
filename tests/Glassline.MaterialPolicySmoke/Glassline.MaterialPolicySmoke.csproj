@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Glassline.MaterialPolicySmoke</RootNamespace>
+    <AssemblyName>Glassline.MaterialPolicySmoke</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\src\Glassline.WinUI.Controls\GlasslineMaterialContracts.cs" Link="GlasslineMaterialContracts.cs" />
+    <Compile Include="..\..\src\Glassline.WinUI.Controls\GlasslineMaterialQualityManager.cs" Link="GlasslineMaterialQualityManager.cs" />
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+</Project>

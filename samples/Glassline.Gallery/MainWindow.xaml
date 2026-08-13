@@ -4,36 +4,58 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:glassline="using:Glassline.WinUI.Controls"
     Title="Glassline Gallery">
-    <ScrollViewer>
-        <StackPanel Padding="32" Spacing="20" Background="{ThemeResource Glassline.Surface.Window}">
-            <TextBlock Style="{StaticResource TitleTextBlockStyle}" Foreground="{ThemeResource Glassline.Text.Primary}" Text="Glassline.WinUI" />
+    <Grid>
+        <Border
+            x:Name="WindowSolidFallback"
+            Background="{ThemeResource Glassline.Surface.Window}"
+            IsHitTestVisible="False" />
+        <ScrollViewer>
+            <StackPanel Padding="32" Spacing="20">
+                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Foreground="{ThemeResource Glassline.Text.Primary}" Text="Glassline.WinUI" />
 
-            <Border Background="{ThemeResource Glassline.Surface.Group}" CornerRadius="{StaticResource Glassline.Radius.Group}" Padding="16">
-                <StackPanel Spacing="8">
-                    <TextBlock Style="{StaticResource Glassline.BodyTextStyle}" Text="Semantic Theme foundation" />
-                    <TextBlock Style="{StaticResource Glassline.CaptionTextStyle}" Text="Glassline roles map onto native WinUI theme resources; optical glass is intentionally outside Theme." TextWrapping="Wrap" />
-                    <Button Content="Native WinUI behavior" HorizontalAlignment="Left" />
-                </StackPanel>
-            </Border>
+                <Border Background="{ThemeResource Glassline.Surface.Group}" CornerRadius="{StaticResource Glassline.Radius.Group}" Padding="16">
+                    <StackPanel Spacing="8">
+                        <TextBlock Style="{StaticResource Glassline.BodyTextStyle}" Text="Semantic Theme foundation" />
+                        <TextBlock Style="{StaticResource Glassline.CaptionTextStyle}" Text="Glassline roles map onto native WinUI theme resources; optical glass is intentionally outside Theme." TextWrapping="Wrap" />
+                        <Button Content="Native WinUI behavior" HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Border>
 
-            <Border Background="{ThemeResource Glassline.Surface.Group}" CornerRadius="{StaticResource Glassline.Radius.Group}" Padding="16">
-                <StackPanel Spacing="12">
-                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="C# custom/composite control baseline" />
-                    <TextBlock Style="{StaticResource Glassline.CaptionTextStyle}" Text="Search input remains a native TextBox; segmented selection remains a native ListBox inside the composite control." TextWrapping="Wrap" />
-                    <glassline:GlasslineSearchField
-                        x:Name="SearchField"
-                        Width="320"
-                        HorizontalAlignment="Left"
-                        AutomationProperties.Name="Gallery search"
-                        PlaceholderText="Search components" />
-                    <glassline:GlasslineSegmentedControl
-                        x:Name="SegmentedControl"
-                        HorizontalAlignment="Left"
-                        AutomationProperties.Name="Gallery view mode"
-                        SelectedIndex="0" />
-                    <TextBlock x:Name="SelectionStatus" Style="{StaticResource Glassline.CaptionTextStyle}" />
-                </StackPanel>
-            </Border>
-        </StackPanel>
-    </ScrollViewer>
+                <glassline:GlasslineGlassContainer
+                    x:Name="ToolbarMaterialRegion"
+                    HorizontalAlignment="Left"
+                    AutomationProperties.Name="Shared toolbar material region"
+                    Material="Toolbar"
+                    Quality="Auto">
+                    <StackPanel Spacing="10">
+                        <TextBlock Style="{StaticResource Glassline.CaptionTextStyle}" Text="One material region owns the backdrop for this grouped toolbar." />
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button Content="Back" />
+                            <Button Content="Forward" />
+                            <Button Content="Share" />
+                        </StackPanel>
+                    </StackPanel>
+                </glassline:GlasslineGlassContainer>
+
+                <Border Background="{ThemeResource Glassline.Surface.Group}" CornerRadius="{StaticResource Glassline.Radius.Group}" Padding="16">
+                    <StackPanel Spacing="12">
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="C# custom/composite control baseline" />
+                        <TextBlock Style="{StaticResource Glassline.CaptionTextStyle}" Text="Search input remains a native TextBox; segmented selection remains a native ListBox inside the composite control." TextWrapping="Wrap" />
+                        <glassline:GlasslineSearchField
+                            x:Name="SearchField"
+                            Width="320"
+                            HorizontalAlignment="Left"
+                            AutomationProperties.Name="Gallery search"
+                            PlaceholderText="Search components" />
+                        <glassline:GlasslineSegmentedControl
+                            x:Name="SegmentedControl"
+                            HorizontalAlignment="Left"
+                            AutomationProperties.Name="Gallery view mode"
+                            SelectedIndex="0" />
+                        <TextBlock x:Name="SelectionStatus" Style="{StaticResource Glassline.CaptionTextStyle}" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </Window>
