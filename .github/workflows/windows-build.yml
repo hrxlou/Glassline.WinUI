@@ -45,6 +45,9 @@ jobs:
       - name: Execute deterministic Gallery scene-selection cases
         shell: pwsh
         run: dotnet run --project tests/Glassline.GallerySceneSmoke/Glassline.GallerySceneSmoke.csproj -c Release
+      - name: Execute deterministic benchmark-data cases
+        shell: pwsh
+        run: dotnet run --project tests/Glassline.BenchmarkDataSmoke/Glassline.BenchmarkDataSmoke.csproj -c Release
 
   build:
     runs-on: windows-latest
