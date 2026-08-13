@@ -31,8 +31,13 @@ foreach ($name in @('SidebarMaterialRegion','ToolbarMaterialRegion','BackdropSta
     }
 }
 foreach ($scene in @('window-foundation','material-regions','controls-matrix')) {
-    if ($sceneIds -notmatch [regex]::Escape($scene) -or $sceneSmoke -notmatch [regex]::Escape($scene)) {
-        throw "Gallery deterministic scene contract missing: $scene"
+    if ($sceneIds -notmatch [regex]::Escape($scene)) {
+        throw "Gallery deterministic scene ID missing: $scene"
+    }
+}
+foreach ($symbol in @('GallerySceneIds.WindowFoundation','GallerySceneIds.MaterialRegions','GallerySceneIds.ControlsMatrix','argument-precedence','unknown-fallback')) {
+    if ($sceneSmoke -notmatch [regex]::Escape($symbol)) {
+        throw "Gallery scene-selection smoke is missing coverage marker: $symbol"
     }
 }
 if ($code -notmatch 'GLASSLINE_GALLERY_SCENE' -or $code -notmatch 'GetCommandLineArgs') {
