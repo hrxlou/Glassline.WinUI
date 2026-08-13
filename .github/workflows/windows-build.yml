@@ -34,6 +34,9 @@ jobs:
       - name: Validate public research corpus contract
         shell: pwsh
         run: ./eng/scripts/validate-corpus.ps1
+      - name: Validate measurement ledger contract
+        shell: pwsh
+        run: ./eng/scripts/validate-measurement-ledger.ps1
       - name: Validate documentation navigation links
         shell: pwsh
         run: ./eng/scripts/validate-doc-links.ps1

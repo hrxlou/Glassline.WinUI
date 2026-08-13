@@ -46,6 +46,10 @@ All notable project changes are recorded here. The project has not published a p
 - Added a 70-row public-safe macOS 26 Tahoe metadata corpus without vendoring referenced images or inventing measurements.
 - Added a buildable SwiftUI/AppKit AppleReferenceLab with stable reference scenes, scene tests, and macOS 26 hosted release-build validation.
 - Kept observed measurement-ledger work explicitly pending native reference capture.
+- Added a deterministic capture matrix: `CaptureMatrix` enumerates 9 scenes × 8 variants, emits `capture-manifest.csv`, and a test pins the committed manifest to the generator. Each `capture_id` is the vocabulary a measurement-ledger row cites as `source_id`.
+- Added a 200 pt calibration rule and `backing_scale` readout to every probe scene, so a capture records the pixel-to-point factor its own measurements depend on.
+- Added `research/AppleReferenceLab/CAPTURE_PROCEDURE.md` covering the required set, machine record, scale calibration, capture naming, and the capture-to-ledger rules.
+- Added `eng/scripts/validate-measurement-ledger.ps1` to CI. It enforces the ledger schema, classification vocabulary, confidence and asset-policy fields, `os_version` on any row carrying geometry, and that an `Observed` AppleReferenceLab row cites a capture id the manifest actually requires. An empty ledger remains valid.
 
 ### Documentation
 

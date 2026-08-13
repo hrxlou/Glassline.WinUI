@@ -33,7 +33,7 @@ The current material implementation is therefore an engineering scaffold, not fi
 | Performance workload vehicle | Implemented baseline | deterministic 100-row / 500-item / 5000-node scenes; no performance numbers claimed |
 | Public Tahoe corpus index | **Done for M0 metadata task** | 70 unique metadata rows; no images or guessed measurements |
 | AppleReferenceLab skeleton | **Done for M0 buildable-probe task** | SwiftUI/AppKit probe tests + release build pass on macOS 26 CI; interactive capture pending |
-| Measurement ledger | **Partial — M0 blocker** | schema/header exists; observed measurement rows still required |
+| Measurement ledger | **Partial — M0 blocker** | schema/header exists and is CI-enforced; 72-capture manifest and capture procedure ready; observed measurement rows still required |
 | Windows CI | Passing baseline | static contracts, pure smokes, x64/ARM64 build, pack/package consumer, desktop-runtime API contract |
 | Package/supply-chain validation | Implemented baseline | package validation, generated nuspec/dependency checks, forbidden assets, SPDX SBOM |
 | Public NuGet | Not started | intentionally blocked on native acceptance/API-release decision |
@@ -121,7 +121,7 @@ Hosted green CI is valid evidence for compilation, static contracts, determinist
 
 These are now primarily evidence/tuning tasks rather than more speculative source expansion:
 
-1. Run AppleReferenceLab on an interactive macOS 26 reference machine and capture the required Light/Dark, active/inactive, state, size, and accessibility variants.
+1. Run AppleReferenceLab on an interactive macOS 26 reference machine and take the 72 captures enumerated in `research/AppleReferenceLab/capture-manifest.csv`, following `research/AppleReferenceLab/CAPTURE_PROCEDURE.md`.
 2. Populate the first observed measurement-ledger rows for Button, Toggle, Slider, Sidebar, Toolbar, and Popover; classify each value as Observed/Inferred/Glassline decision.
 3. Capture native Windows Gallery window-foundation and material-region baselines for Light/Dark/High Contrast, active/inactive, Full/Reduced/Solid.
 4. Execute live Narrator/UIA tree/provider tests for SearchField and SegmentedControl; verify native TextBox/ListBox patterns remain accessible without duplicate wrapper announcements.
@@ -143,6 +143,7 @@ These are now primarily evidence/tuning tasks rather than more speculative sourc
 
 ## Status change log
 
+- **2026-08-14:** Made the M0 capture task executable: deterministic 72-capture manifest generated and pinned by `CaptureMatrix`, per-scene scale calibration in the probe, a written capture procedure, and CI enforcement of the measurement-ledger schema and evidence rules. No captures taken and no ledger rows added; M0 remains open.
 - **2026-08-14:** Replaced CoreWindow-dependent APIs with `Microsoft.UI.System.ThemeSettings` and marshalled background-thread `UISettings` events, fixing a startup crash that had made every Gallery launch fail. Added `validate-desktop-runtime.ps1` so the class of defect cannot reappear invisibly. First desktop launch of the window-foundation and material-region path recorded in the window-backdrop and material acceptance docs; launch survival only, no visual or performance claim.
 - **2026-08-13:** Hosted implementation pass completed through native Mica/Solid window foundation, shared adaptive material runtime, deterministic Gallery diagnostics, benchmark workloads, non-invasive AutomationPeers, 70-row public-safe corpus, buildable AppleReferenceLab/macOS 26 CI, package validation, generated-package consumer validation, and SBOM supply-chain checks.
 - **2026-08-13:** M0 accounting advanced to 5/6 complete + 1 partial. M0 remains open because observed measurement-ledger evidence has not been captured.
