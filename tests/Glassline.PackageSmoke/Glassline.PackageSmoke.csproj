@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <UseWinUI>true</UseWinUI>
+    <WindowsPackageType>None</WindowsPackageType>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <RootNamespace>Glassline.PackageSmoke</RootNamespace>
+    <AssemblyName>Glassline.PackageSmoke</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.3.1" />
+    <PackageReference Include="Glassline.WinUI.Controls" Version="0.1.0-preview.1" />
+  </ItemGroup>
+</Project>

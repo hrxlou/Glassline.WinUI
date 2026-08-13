@@ -19,6 +19,9 @@ jobs:
       - name: Validate Theme resource contract
         shell: pwsh
         run: ./eng/scripts/validate-theme.ps1
+      - name: Validate Controls static/template contract
+        shell: pwsh
+        run: ./eng/scripts/validate-controls.ps1
 
   build:
     runs-on: windows-latest
@@ -66,6 +69,12 @@ jobs:
               }
             }
           }
+      - name: Build NuGet package consumer smoke app
+        shell: pwsh
+        run: |
+          $packageSource = (Resolve-Path artifacts/packages).Path
+          dotnet restore tests/Glassline.PackageSmoke/Glassline.PackageSmoke.csproj -p:Platform=x64 --source $packageSource --source https://api.nuget.org/v3/index.json
+          dotnet build tests/Glassline.PackageSmoke/Glassline.PackageSmoke.csproj -c Release -p:Platform=x64 --no-restore
       - uses: actions/upload-artifact@v4
         with:
           name: nuget-packages
