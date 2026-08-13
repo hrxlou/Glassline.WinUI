@@ -18,6 +18,16 @@ All notable project changes are recorded here. The project has not published a p
 - Added semantic material roles, adaptive Auto/Full/Reduced/Solid policy, Windows environment capability signals, and grouped `GlasslineGlassContainer` regions.
 - Added current provisional Full=Desktop Acrylic / Reduced=MicaAlt / Solid=semantic surface baseline.
 
+### Fixed
+
+- Replaced `AccessibilitySettings` with `Microsoft.UI.System.ThemeSettings` in `GlasslineWindowBackdropController` and `GlasslineMaterialCapabilities`. `AccessibilitySettings.HighContrastChanged` requires a `CoreWindow`, which WinUI 3 desktop apps do not have, so subscribing threw `COMException` and terminated the Gallery during startup on every launch.
+- Marshalled `UISettings.AdvancedEffectsEnabledChanged` handling onto the owning `DispatcherQueue`. `UISettings` events are raised on a background thread while both handlers mutate XAML, so toggling Windows transparency effects could crash with a wrong-thread failure.
+- Added `eng/scripts/validate-desktop-runtime.ps1` to CI. It rejects CoreWindow-dependent UWP APIs in desktop source and requires `DispatcherQueue` marshalling for `UISettings` subscriptions; both defects above were previously invisible to a fully green build.
+
+### Changed (source-breaking, pre-release)
+
+- `GlasslineMaterialCapabilities` now requires the owning `WindowId` in its constructor, because `ThemeSettings` is created per window. `GlasslineGlassContainer` resolves it from `XamlRoot.ContentIslandEnvironment` on load, and falls back to the Solid material when no content island is available.
+
 ### Controls / accessibility source contract
 
 - Added `GlasslineSearchField` using a native WinUI TextBox input/IME path.

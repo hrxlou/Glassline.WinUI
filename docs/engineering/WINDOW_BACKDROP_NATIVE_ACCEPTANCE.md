@@ -11,6 +11,10 @@
 - WinUI remains responsible for unsupported-platform/system-backdrop fallback.
 - The app content root retains `Glassline.Surface.Window` as the semantic solid foundation.
 
+## Native evidence recorded
+
+- 2026-08-14, Windows 11 Enterprise 10.0.26200, x64 Debug: the Gallery reaches an interactive window (`Glassline Gallery`, responding) and stays alive. This is the first recorded desktop launch of the window-backdrop path; before the `ThemeSettings` fix, `AccessibilitySettings.HighContrastChanged` threw during startup on every launch while CI stayed green. Launch survival only — no visual, DPI, or interaction claim is made here.
+
 ## Native Windows acceptance still required
 
 - [ ] Verify Mica on a supported Windows 11 machine in Light and Dark modes.

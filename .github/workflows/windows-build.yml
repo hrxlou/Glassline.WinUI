@@ -25,6 +25,9 @@ jobs:
       - name: Validate material runtime contract
         shell: pwsh
         run: ./eng/scripts/validate-materials.ps1
+      - name: Validate WinUI 3 desktop runtime contract
+        shell: pwsh
+        run: ./eng/scripts/validate-desktop-runtime.ps1
       - name: Validate Gallery deterministic contract
         shell: pwsh
         run: ./eng/scripts/validate-gallery.ps1
