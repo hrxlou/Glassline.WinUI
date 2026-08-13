@@ -3,11 +3,16 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Glassline Gallery">
-    <Grid Padding="32">
+    <Grid Padding="32" Background="{ThemeResource Glassline.Surface.Window}">
         <StackPanel Spacing="12">
-            <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Glassline.WinUI" />
-            <TextBlock Text="Build baseline: shipping controls are added in later work items." TextWrapping="Wrap" />
-            <Button Content="Native WinUI baseline" HorizontalAlignment="Left" />
+            <TextBlock Style="{StaticResource TitleTextBlockStyle}" Foreground="{ThemeResource Glassline.Text.Primary}" Text="Glassline.WinUI" />
+            <Border Background="{ThemeResource Glassline.Surface.Group}" CornerRadius="{StaticResource Glassline.Radius.Group}" Padding="16">
+                <StackPanel Spacing="8">
+                    <TextBlock Style="{StaticResource Glassline.BodyTextStyle}" Text="Semantic Theme foundation" />
+                    <TextBlock Style="{StaticResource Glassline.CaptionTextStyle}" Text="These resources map Glassline roles onto native WinUI theme roles. Optical glass is intentionally not implemented in Theme." TextWrapping="Wrap" />
+                    <Button Content="Native WinUI behavior" HorizontalAlignment="Left" />
+                </StackPanel>
+            </Border>
         </StackPanel>
     </Grid>
 </Window>

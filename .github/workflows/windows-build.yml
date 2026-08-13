@@ -16,6 +16,9 @@ jobs:
       - name: Validate repository contract
         shell: pwsh
         run: ./eng/scripts/validate-repository.ps1
+      - name: Validate Theme resource contract
+        shell: pwsh
+        run: ./eng/scripts/validate-theme.ps1
 
   build:
     runs-on: windows-latest
