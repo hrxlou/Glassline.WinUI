@@ -1,11 +1,17 @@
 # AppleReferenceLab Capture Procedure
 
-Status: **procedure defined; first session on 2026-08-14 produced structural reference only**.
+Status: **54 of 72 required captures taken and verified; 18 `increase-contrast` captures outstanding**.
 
-A 2026-08-14 session captured all 9 scenes but at 1x, with the window inactive in every capture and
-from a build that predated the calibration rule. Those captures confirm the probe renders correctly
-on real hardware; none of them can support a geometry row. The preconditions below exist because of
-that session.
+Session history:
+
+- **2026-08-14, first attempt** — all 9 scenes, but 1x, inactive-window only, and from a build
+  predating the calibration rule. Structural reference only; no geometry row can rest on it. The
+  preconditions below exist because of that session.
+- **2026-08-14, second attempt** — 54 manifest captures on macOS 26.5.2 at a measured 2.0000 px/pt,
+  every filename matching its `capture_id`, plus 4 open-menu/popover observations. The
+  `increase-contrast` variant could not be captured because the matrix required an isolated contrast
+  state that macOS does not provide; the variant has since been redefined to the coupled state
+  macOS actually exposes, so those 18 captures are now reachable.
 
 This is the operating procedure for an interactive macOS 26 reference session. It exists because the
 capture matrix was previously prose. Prose produces a different set of screenshots every session and
@@ -54,9 +60,12 @@ the header shows, never after what you intended to set. If the header shows
 capture_id=NONE — this environment matches no required capture; do not name a file from it
 ```
 
-the environment is not one of the required variants — most often both Reduce Transparency and
-Increase Contrast are on, since the matrix isolates them. Fix the setting and re-check before
-capturing.
+the environment is not one of the required variants. On an inactive window this is expected for the
+accessibility variants, which are only required active.
+
+macOS 26.5.2 enables Reduce Transparency automatically when Increase Contrast is turned on and
+disables its switch. That coupled state **is** the `increase-contrast` variant — it is what a user
+with Increase Contrast actually sees, and no isolated contrast state exists to capture instead.
 
 ## Machine record
 

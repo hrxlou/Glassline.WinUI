@@ -42,13 +42,15 @@ func everySceneRequiresTheSameCaptureShape() {
 }
 
 @Test
-func accessibilityModeResolvesOnlyIsolatedVariants() {
+func increaseContrastWinsOverCoupledReduceTransparency() {
     #expect(CaptureMatrix.accessibilityMode(reduceTransparency: false, increaseContrast: false) == .standard)
     #expect(CaptureMatrix.accessibilityMode(reduceTransparency: true, increaseContrast: false) == .reduceTransparency)
     #expect(CaptureMatrix.accessibilityMode(reduceTransparency: false, increaseContrast: true) == .increaseContrast)
 
-    // Both settings on is a real macOS state that no required capture describes.
-    #expect(CaptureMatrix.accessibilityMode(reduceTransparency: true, increaseContrast: true) == nil)
+    // macOS 26.5.2 forces Reduce Transparency on when Increase Contrast is enabled. That coupled
+    // state is what a real user with Increase Contrast sees, so it is the contrast variant rather
+    // than an unnameable state.
+    #expect(CaptureMatrix.accessibilityMode(reduceTransparency: true, increaseContrast: true) == .increaseContrast)
 }
 
 @Test
