@@ -1,128 +1,172 @@
-# Project Plan
+# Glassline.WinUI Project Plan
 
-> Last updated: 2026-08-13  
-> Current milestone: **M0 — Corpus & Decisions**
+## Product objective
 
-## 1. Delivery strategy
+Build a Windows 11-first WinUI 3 design system that preserves native Windows behavior while providing an alternate semantic visual system and desktop shell/material primitives.
 
-Glassline.WinUI will be built in seven gated milestones. The order is deliberate: **reference/state/token contracts before control implementation**, **native WinUI behavior before optical polish**, and **shared/adaptive material architecture before multiplying glass controls**.
+Glassline is not a SwiftUI compatibility layer, not an AppKit clone, and not a custom cross-platform renderer. Native WinUI controls, Windows window semantics, accessibility, text/IME, DPI, input, and compositor behavior remain the base contract.
 
-| Milestone | Goal | Key deliverables | Exit gate |
-|---|---|---|---|
-| M0 | Corpus & Decisions | repo bootstrap, AppleReferenceLab plan, 50+ corpus index, measurement ledger, ADR-0001~0010, brand/package decision | Core visual/system/material rules can be justified with sources and decisions |
-| M1 | Foundation | semantic color, typography, spacing/radius, theme dictionaries, active/inactive, system Mica window foundation where appropriate, Solid/HC fallback, standard content surfaces | Foundation tokens/backdrop are consumable without advanced renderer |
-| M2 | Glass Engine | shared `GlassContainer`-style regions, baseline Composition material, Sidebar/Toolbar/Popover roles, `MaterialCapabilities`, `MaterialQualityManager`, pointer/specular/motion, resize/inactive downgrade, fallback | Quality/perf gate; advanced refraction removed if it cannot meet budget |
-| M3 | Core Controls | Button, ToggleSwitch, Slider, TextBox, Search, Check/Radio, Combo/DropDown, Segmented | P0 control state matrix passes DoD without per-control backdrop proliferation |
-| M4 | Window & Shell | titlebar, right caption semantics, sidebar/toolbar shell, Settings + productivity archetypes | Snap/system menu/resize/input and visual hierarchy are coherent |
-| M5 | Desktop Data | List/Tree/Outline/Table/Menu/Popover/Sheet/Inspector | Desktop productivity primitives usable at scale without breaking virtualization |
-| M6 | RC / Distribution | visual/UIA/IME/perf/package/IP gates, Gallery/docs, preview/stable package | All release gates green |
+## Current planning state — 2026-08-13
 
-## 2. Workstreams
+The repository now has more engineering infrastructure than the formal milestone number suggests. M1/M2/M3 engineering baselines were implemented in parallel so their build/package/API contracts could be tested early. **M0 is still the active project gate** because observed reference measurements are missing.
 
-### Research & provenance
-- Build a 50+ scene corpus index without committing Apple screenshots.
-- Implement AppleReferenceLab capture plan for native SwiftUI/AppKit controls.
-- Populate measurement ledger with Observed/Inferred/Glassline-decision classifications.
-- Treat the private bootstrap blueprint files as immutable provenance sources; transfer reusable conclusions into public role-specific docs rather than rewriting the archived originals.
-- Revalidate competitive landscape quarterly.
+Current state:
 
-### Foundation & design system
-- Freeze semantic token naming before deep control templates.
-- Separate content surfaces from functional glass surfaces.
-- Establish the window foundation as native system Mica when appropriate, with semantic Solid/High Contrast fallback.
-- Keep normal group/list/table/input surfaces cheap and non-backdrop by default.
-- Define Light/Dark/High Contrast and active/inactive together.
-- Keep `DesignGeneration` separate from NuGet SemVer.
+- M0 corpus index: done at metadata level with 70 rows.
+- M0 AppleReferenceLab skeleton: done and build/test verified on macOS 26 CI.
+- M0 measurement ledger: schema only; this is the remaining M0 task blocker.
+- M1 semantic Theme + native Mica/Solid window foundation: engineering baseline implemented, native visual acceptance pending.
+- M2 shared material runtime: engineering baseline implemented, final optical/performance decision pending.
+- M3 control work: SearchField + SegmentedControl engineering baselines implemented, native interactive DoD pending.
+- deterministic Gallery, diagnostics, benchmark workloads, package-consumer validation, and supply-chain validation are implemented.
 
-### Material engine
-- Prototype the shared material-region primitive before individual glass-control expansion.
-- Group visually related toolbar/sidebar/popover children into shared regions.
-- Keep material roles semantic (`Sidebar`, `Toolbar`, `Popover`, `Interactive`, `Prominent`) instead of exposing raw shader constants as the primary API.
-- Implement `Auto → Full / Reduced / Solid` as runtime behavior, not documentation-only modes.
-- Continuous resize must temporarily reduce expensive effects; inactive/background windows suppress nonessential continuous material animation.
-- Advanced refraction/lensing is experimental and last in the sequence.
+## Immediate critical path
 
-### Controls & shell
-- Prefer ControlTemplate/VisualState on native controls.
-- Add composite controls only where WinUI lacks the needed semantics.
-- Keep Windows caption/Snap/system menu/keyboard behavior.
-- Do not attach live backdrop effects to virtualized list/tree/table rows.
-- Use `Glassline.Gallery` as both sample and product-quality test vehicle.
+The critical path is now evidence-first:
 
-### Validation
-- Visual golden baselines validate Glassline regressions, not Apple pixel matching.
-- UIA/Narrator, keyboard, IME, DPI, text scale, RTL, GPU/RDP fallback are independent release lanes.
-- Performance budgets are locked after reference hardware is selected.
-- Material benchmarks record frame-time percentiles, memory/GPU signals, glass-region count, glass area, material mode, and refraction state.
+1. **Native macOS reference capture** — run AppleReferenceLab interactively for the planned scenes/states.
+2. **Observed measurement ledger** — record Button, Toggle, Slider, Sidebar, Toolbar, and Popover evidence with source/state/confidence/classification.
+3. **Native Windows baseline acceptance** — establish screenshot/UIA/IME/DPI/window/input/RDP evidence for the current baseline.
+4. **Native performance baseline** — measure the deterministic 100/500/5000 benchmark scenes on agreed hardware.
+5. **Material decision** — decide whether built-in Desktop Acrylic/MicaAlt is sufficient or a custom Composition material is justified.
+6. **Measured P0 execution** — tune/add controls only after their Definition of Ready has actual reference evidence.
+7. **Preview release preparation** — API review, first real package baseline, release feed, cross-version compatibility gate.
+8. **Advanced optics last** — pointer/specular/refraction only after baseline quality/performance/fallback is proven.
 
-### Distribution & IP
-- Zero Apple shipping assets.
-- All third-party source/assets require provenance and notice review.
-- Public Gallery must not reproduce Apple app information architecture 1:1.
-- Stable publication requires the IP gate and selected repository/package license.
+## Milestones
 
-## 3. Immediate critical path
+### M0 — Corpus & Decisions
 
-1. **Finish M0 public research artifacts:** 50+ corpus rows + measurement samples.
-2. **Create AppleReferenceLab buildable skeleton on macOS** and capture the first Button/Toggle/Slider/TextInput state set.
-3. **Resolve open platform/package decisions:** minimum Windows 11 build, .NET target, C++ support boundary, icon provenance, preview feed, screenshot/reference GPU hardware.
-4. **Turn M1 tokens into actual WinUI ResourceDictionaries and establish Mica/Solid foundation behavior.**
-5. **Build Glassline.Gallery before deep P0 control work**, including material-mode and resize/inactive diagnostics.
-6. **Prototype one shared GlassContainer-style toolbar/sidebar region** with a baseline Composition material and no advanced refraction.
-7. **Implement MaterialCapabilities + MaterialQualityManager** and prove Full → Reduced → Solid transitions.
-8. **Run the M2 grouped-region benchmark** with Sidebar + Toolbar before expanding to Popover/interactive roles.
-9. **Implement P0 controls in dependency order:** Button → Toggle → Slider → Text input/Search → Check/Radio → Combo/DropDown → Segmented.
-10. **Experiment with advanced refraction only after baseline material performance is stable.**
+**Status: 5/6 primary tasks complete, 1 partial. Exit blocked on observed measurements.**
 
-## 4. Dependency order
+Done:
 
-```text
-Research corpus + measurements
-        ↓
-ADRs + semantic token/material contract
-        ↓
-Mica/Solid foundation + Theme dictionaries
-        ↓
-Gallery state matrix + screenshot/perf harness
-        ↓
-Shared GlassContainer-style region
-        ↓
-MaterialCapabilities + QualityManager
-        ↓
-Sidebar + Toolbar grouped-material gate
-        ↓
-P0 controls + Popover/interactive expansion
-        ↓
-Window & shell
-        ↓
-Desktop data controls
-        ↓
-Experimental refraction (optional) ──┐
-        ↓                            │
-Hardening / packaging / IP gate ◄───┘
-```
+- repository/bootstrap and CI foundation;
+- brand/package name and MIT license;
+- ADR-0001 through ADR-0010 baseline;
+- 70-scene public-safe macOS 26 Tahoe metadata corpus;
+- buildable AppleReferenceLab with stable scenes and macOS 26 test/build CI.
 
-## 5. Material implementation sequence
+Remaining:
 
-M1/M2 development follows this order:
+- interactive reference captures;
+- populate and review the measurement ledger;
+- make explicit Glassline decisions from observed/inferred evidence rather than guessed pixels.
 
-1. Mica/solid window foundation and normal semantic content surfaces.
-2. One shared material region (`GlassContainer` working name).
-3. Baseline backdrop → blur/diffusion → tint/luminance → edge/specular → shadow.
-4. Pointer/press motion that does not require continuous heavy redraw.
-5. Capability/quality manager and environment transitions.
-6. Resize and inactive-window downgrade behavior.
-7. Sidebar + Toolbar benchmark.
-8. Popover and selected interactive material roles.
-9. Optional refraction/lensing R&D.
+**M0 exit gate:** reference measurements for the initial P0/material roles are reviewed and usable by component Definition of Ready.
 
-Do not reverse the order by implementing refraction first or by turning each P0 control into an independent glass renderer.
+### M1 — Foundation
 
-## 6. Change-control rules
+**Status: partial engineering baseline implemented; native visual acceptance pending.**
 
-- Any new UI framework dependency requires an ADR + license review.
-- Any visual literal becoming public API must be converted to a semantic role or justified.
-- Any material change affecting existing screenshots requires visual-review evidence.
-- Any design that introduces per-item live backdrop effects into virtualized List/Tree/Table requires an explicit performance ADR and benchmark evidence.
-- Any change that harms native text input/IME/UIA semantics must be rejected or redesigned unless explicitly approved by ADR.
-- `STATUS.md` is updated in the same PR/commit whenever a milestone task or architecture decision changes state.
+Implemented:
+
+- semantic Light/Dark/High Contrast resources;
+- typography/spacing/radius semantic baseline;
+- Windows 11/.NET/WinAppSDK target baseline;
+- native `Window.SystemBackdrop` Auto/Mica/MicaAlt/Solid controller;
+- mandatory Solid behavior for High Contrast/transparency-off.
+
+Remaining:
+
+- native window screenshot matrix;
+- active/inactive, resize, Snap, mixed-DPI, RDP acceptance;
+- measured optical tuning of semantic surfaces;
+- finalize any design-generation public API after measurements.
+
+### M2 — Glass Engine
+
+**Status: partial engineering baseline implemented; final optical engine not selected.**
+
+Implemented:
+
+- semantic material roles;
+- `GlasslineGlassContainer` grouped region primitive;
+- deterministic MaterialQualityManager;
+- environment signals for High Contrast, transparency effects, RDP, window activation, and resize;
+- Full/Reduced/Solid transitions;
+- current Full = Desktop Acrylic, Reduced = MicaAlt, Solid = semantic opaque surface;
+- Gallery diagnostics and grouped Sidebar/Toolbar examples.
+
+Remaining:
+
+- native quality/performance acceptance;
+- scroll-edge behavior and any pointer/specular treatment supported by evidence;
+- Popover/Interactive/Prominent visual tuning;
+- decide built-in material vs custom Composition path;
+- advanced refraction/lensing only if later evidence justifies it.
+
+**M2 kill rule:** if stronger optical effects are unstable, expensive, inaccessible, or cannot degrade predictably, keep the built-in/reduced/solid model and drop advanced refraction.
+
+### M3 — Core Controls
+
+**Status: two engineering baselines implemented; component family not complete.**
+
+Implemented:
+
+- SearchField with native TextBox input/IME path;
+- SegmentedControl with native ListBox single-selection path;
+- stable dependency-property/template-part contracts;
+- non-invasive wrapper AutomationPeers;
+- Gallery and generated-NuGet consumer integration.
+
+Remaining:
+
+- native DoD for these two controls;
+- measured Buttons, ToggleSwitch, Slider, CheckBox/RadioButton, Combo/DropDown, Sidebar/nav row, List row, Toolbar/group, MenuFlyout/ContextMenu, Settings group/row;
+- each new component must satisfy Definition of Ready before implementation.
+
+### M4 — Window & Shell
+
+**Status: window-foundation precursor implemented; shell milestone not started.**
+
+Remaining:
+
+- titlebar/content integration and Windows caption semantics;
+- Snap/resize/system-menu validation;
+- edge-to-edge sidebar/window shell primitives;
+- window state/inactive behavior and multi-monitor acceptance.
+
+### M5 — Desktop Data / Presentation
+
+**Status: benchmark workload scaffolding exists; product components not started.**
+
+Planned:
+
+- TreeView/OutlineView/Table/Split/Inspector/TabView;
+- desktop data density and large-list behavior;
+- benchmark evidence from 100-row settings, 500-item grid, 5k-node tree, rapid transient UI, and continuous resize.
+
+### M6 — Hardening / RC
+
+**Status: not started.**
+
+Requires:
+
+- full native screenshot matrix and visual review;
+- UIA/Narrator and keyboard/input acceptance;
+- IME/localization/RTL/text-scale/DPI acceptance;
+- reference-hardware performance budgets;
+- API compatibility against a real prior package baseline;
+- package/license/SBOM checks;
+- release notes, samples, docs, and preview/stable publishing policy.
+
+## Validation strategy
+
+Three evidence types must never be conflated:
+
+1. **Hosted engineering evidence** — source contracts, pure logic, build, pack, package consumer, SBOM, AppleReferenceLab buildability.
+2. **Native Windows evidence** — real rendered UI, accessibility, IME, window/input behavior, DPI/RDP, screenshots, performance.
+3. **Native macOS evidence** — AppleReferenceLab reference captures and observed measurements.
+
+See [`engineering/ENVIRONMENT_BOUNDARY.md`](engineering/ENVIRONMENT_BOUNDARY.md).
+
+## Planning rules
+
+- Do not use uninspected screenshots or source code to invent geometry/material values.
+- Do not treat compile success as visual/accessibility/IME/performance sign-off.
+- Keep content surfaces mostly semantic/solid and group functional glass regions.
+- Never create one live backdrop/effect pipeline per repeated item.
+- Preserve native TextBox/selector controls for input/accessibility when a semantic equivalent exists.
+- Advanced optical effects must be optional and cannot block v1.
+- First public package establishes the real API baseline; do not manufacture a fake compatibility baseline before release.

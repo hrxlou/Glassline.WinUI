@@ -1,163 +1,146 @@
 # Project Status
 
-> **Update this file whenever milestone state changes.**  
+> **Update this file whenever milestone or evidence state changes.**  
 > Last updated: **2026-08-13**  
-> Current phase: **M0 — Corpus & Decisions**  
+> Current project phase: **M0 — Corpus & Decisions, blocked on observed measurement evidence**  
+> Parallel engineering baseline: **M1/M2/M3 work has started and is CI-validated where hosted execution is meaningful**  
 > Remote repository: `hrxlou/Glassline.WinUI`  
-> Shipping implementation: **engineering baseline started**
+> Public release: **not published / not release-ready**
 
 ## Executive status
 
-The product, architecture, validation, and research specifications are organized under the **Glassline.WinUI** repository structure. M0 research is **not complete**: the 50+ scene corpus, populated measurement ledger, and buildable AppleReferenceLab still remain. In parallel, the repository now has a real, buildable WinUI 3 solution, semantic Theme foundation, Gallery integration, and the first two C# custom/composite-control engineering baselines. This implementation work establishes build/package/API contracts; it does **not** satisfy the remaining M0 research exit criteria or the native interactive Definition of Done for those controls.
+Glassline.WinUI has moved well beyond a documentation-only repository. The repo now contains a real WinUI 3 solution, semantic Theme resources, native Mica/Solid window-foundation code, a shared adaptive material-region runtime, two C# custom/composite controls with non-invasive AutomationPeers, deterministic Gallery validation scenes, performance workload scenes, NuGet/package-consumer validation, supply-chain metadata/SBOM validation, a 70-scene public-safe Tahoe corpus index, and a buildable AppleReferenceLab verified on macOS 26 CI.
 
-The material contract remains **Mica/Solid foundation → grouped functional glass regions → adaptive Full/Reduced/Solid quality → optional refraction**. Shipping optical glass and Mica window-shell work have not started yet.
+The project **remains in M0** because the reference-measurement task is intentionally not faked. The corpus index and AppleReferenceLab source are ready, but `research/measurements/measurement-ledger.csv` does not yet contain the observed Button/Toggle/Slider/Sidebar/Toolbar/Popover measurements needed to turn references into evidence-backed Glassline decisions.
+
+The current material implementation is therefore an engineering scaffold, not final Tahoe/Liquid-Glass fidelity: **native Mica/Solid window foundation → grouped `GlasslineGlassContainer` regions → adaptive Full/Reduced/Solid policy → optional advanced optics later**. Full currently uses built-in Desktop Acrylic and Reduced uses MicaAlt; those choices remain provisional until native visual/performance review.
 
 ## Progress snapshot
 
-| Track | State | Evidence / note |
+| Track | State | Evidence / boundary |
 |---|---|---|
-| Product contract / scope | Done for M0 | scope/non-goals and Windows-vs-visual boundary documented |
-| Visual principles / material model | **Done for M0, clarified** | functional/content separation, Mica foundation, grouped regions, semantic material roles, adaptive quality documented |
-| Architecture/package contract | **Done for M0, implemented baseline** | Theme / Controls / Effects / Gallery projects now exist and respect documented dependency boundaries |
-| Material architecture ADR | **Done** | ADR-0010 + `docs/architecture/MATERIAL_ARCHITECTURE.md` |
-| Validation/release/IP policy | **Done for M0, active in CI** | repository/Theme/Controls contract validation plus package forbidden-asset scan run in CI |
-| Competitive research | Done, dated | Snapshot dated 2026-08-13; periodic revalidation required |
-| Windows App SDK pin | **Done** | 2.3.1 centrally pinned |
-| Windows/.NET baseline | **Done for engineering baseline** | `net8.0-windows10.0.22000.0`; minimum target platform `10.0.22000.0`; x64 + ARM64 compile lanes |
-| Repository bootstrap | **Done** | public GitHub repository, MIT, solution/projects, workflows, scripts |
-| Project name | **Done** | `Glassline.WinUI` finalized for repository/package namespace |
-| Repository license | **Done** | MIT |
-| ADR-0001~0010 | **Done, initial** | under `docs/architecture/adr/` |
-| Measurement ledger | **Partial** | schema committed; observed measurements not yet populated |
-| 50+ visual corpus index | Not started | schema exists; rows need collection |
-| AppleReferenceLab | Not started | directory/spec exists; buildable macOS probe app not yet created |
-| M1 foundation XAML | **Partial — engineering baseline** | semantic Light/Dark/HighContrast resources implemented and WinUI-compiled; Mica/Solid window foundation still pending |
-| M2 glass implementation | Not started | `GlassContainer`/quality manager remain architecture only; HTML/CSS lab does not count as shipping effects code |
-| P0 controls | **Partial — engineering baseline** | `GlasslineSearchField` + `GlasslineSegmentedControl` implemented, x64/ARM64 compiled, packed and consumer-compiled; native interactive DoD pending |
-| Gallery / executable tests | **Partial — buildable** | Gallery compiles with Theme and both controls; deterministic launch/screenshot/UI automation harness remains pending |
-| NuGet packaging | **Baseline passing** | Theme/Controls/Effects pack; package asset scan; fresh Controls-package consumer restore/build passes |
-| Repository policy CI | **Passing** | build/contract/package/policy lanes passed for PR #6 before merge |
+| Product contract / scope | Done for M0 | Windows-native behavior boundary and non-goals documented |
+| Architecture/package contract | Implemented baseline | Theme / Controls / Effects / Gallery projects and dependency boundaries exist |
+| Semantic Theme | Partial M1 — implemented baseline | Light/Dark/High Contrast resources compile; native visual tuning remains |
+| Window foundation | Partial M1 — implemented baseline | `Window.SystemBackdrop` Auto/Mica/MicaAlt/Solid controller; native appearance/DPI/window acceptance pending |
+| Shared material runtime | Partial M2 — implemented baseline | one grouped backdrop region, role/quality contracts, environment policy, Full/Reduced/Solid |
+| Advanced optical/refraction path | Not started by design | blocked until baseline native visual/performance evidence |
+| P0 composite controls | Partial M3 — engineering baseline | SearchField + SegmentedControl compile/package; native interactive DoD pending |
+| Composite AutomationPeers | Implemented baseline | wrapper Group/class identity; live UIA/Narrator tree/provider behavior pending |
+| Gallery validation vehicle | Implemented baseline | deterministic scenes, AutomationIds, diagnostics, resize/activation propagation |
+| Performance workload vehicle | Implemented baseline | deterministic 100-row / 500-item / 5000-node scenes; no performance numbers claimed |
+| Public Tahoe corpus index | **Done for M0 metadata task** | 70 unique metadata rows; no images or guessed measurements |
+| AppleReferenceLab skeleton | **Done for M0 buildable-probe task** | SwiftUI/AppKit probe tests + release build pass on macOS 26 CI; interactive capture pending |
+| Measurement ledger | **Partial — M0 blocker** | schema/header exists; observed measurement rows still required |
+| Windows CI | Passing baseline | static contracts, pure smokes, x64/ARM64 build, pack/package consumer |
+| Package/supply-chain validation | Implemented baseline | package validation, generated nuspec/dependency checks, forbidden assets, SPDX SBOM |
+| Public NuGet | Not started | intentionally blocked on native acceptance/API-release decision |
+| Cross-version API compatibility | Prepared but inactive | no real released Glassline package exists yet to serve as truthful baseline |
 
 ## M0 task accounting
 
-The milestone dashboard still tracks six primary M0 tasks. Implementation progress does not change these research exit criteria:
+The original six primary M0 dashboard tasks now stand at:
 
-- [x] Repository/bootstrap — public repository + policy scaffold + MIT license + buildable WinUI solution.
-- [ ] AppleReferenceLab skeleton — buildable probe app still required.
-- [ ] 50+ visual corpus index — schema only.
-- [~] Measurement ledger — schema only; data collection required.
-- [x] ADR baseline — ADR-0001~0010 accepted, including material architecture.
+- [x] Repository/bootstrap — public repo, MIT, buildable WinUI solution, CI.
+- [x] AppleReferenceLab skeleton — buildable SwiftUI/AppKit probe with macOS 26 CI.
+- [x] 50+ visual corpus index — **70** public-safe metadata rows committed and validated.
+- [~] Measurement ledger — schema exists; observed reference measurements are still missing.
+- [x] ADR baseline — ADR-0001 through ADR-0010 established.
 - [x] Brand/package name — `Glassline.WinUI` finalized.
 
-**M0 primary-task progress: 3/6 complete, 1 partial, 2 not started.** This is a research/task-state indicator, not an implementation effort estimate.
+**M0 primary-task progress: 5/6 complete, 1 partial, 0 not started.** M0 does not exit until observed measurements are captured and reviewed; implementation progress in later milestones does not waive that evidence requirement.
 
-## What is complete
+## Implemented hosted-environment baseline
 
-- Repository and package architecture is no longer documentation-only: the Theme, Controls, Effects, and Gallery projects plus `Glassline.WinUI.sln` build on Windows CI.
-- The Windows engineering baseline is locked to .NET 8 with Windows 11 build 22000 target/minimum and Windows App SDK 2.3.1.
-- x64 and ARM64 restore/build lanes pass on Windows runners.
-- `Glassline.WinUI.Theme` has Light, Dark, and High Contrast semantic resource dictionaries mapped to native WinUI theme resources without shipping copied Apple color/font/symbol assets.
-- Theme validation parses the XAML contract, checks required semantic keys, rejects raw color literals for this baseline, and keeps runtime optical effects out of Theme.
-- `GlasslineSearchField` is a templated C# `Control` whose `PART_Input` is a native WinUI `TextBox`; text input, selection, clipboard, keyboard, and IME remain on the native input path.
-- `GlasslineSegmentedControl` is a templated C# `Control` whose `PART_Selector` is a native WinUI `ListBox` using single-selection semantics.
-- Both controls expose dependency-property/template-part contracts and are instantiated by Gallery XAML.
-- Controls static/template validation checks the native-composition rules and prevents custom text/IME-engine drift.
-- Theme/Controls/Effects NuGet packages are produced and scanned for forbidden shipping assets.
-- A separate WinUI package-smoke app restores the generated `Glassline.WinUI.Controls` NuGet and compiles without any Glassline project reference, validating the produced package-consumer path.
-- Native-interactive acceptance requirements for the two controls are explicitly recorded in `docs/engineering/CONTROLS_NATIVE_ACCEPTANCE.md` rather than being falsely marked complete.
-- Mica is positioned as the preferred native window foundation when supported/appropriate, with semantic Solid fallback.
-- Functional glass is additive and grouped into shared material regions rather than per-control backdrop pipelines.
-- `Auto → Full / Reduced / Solid` is defined as runtime behavior; resize/inactive/environment downgrade policy is documented.
-- Advanced refraction remains optional and cannot block v1.
-- Public asset/IP policy is documented; non-redistributable reference material is excluded from the repository.
+### Theme / Window
 
-## Current validation evidence
+- Windows 11 engineering target: `net8.0-windows10.0.22000.0`, minimum platform `10.0.22000.0`, x64 + ARM64.
+- Windows App SDK 2.3.1 is centrally pinned.
+- semantic Light/Dark/High Contrast resources use WinUI/Windows theme semantics instead of shipping Apple fonts/symbols/assets.
+- `GlasslineWindowBackdropController` uses native WinUI `Window.SystemBackdrop` and forces Solid for High Contrast/transparency-off policy.
 
-### PR #4 — build baseline
+### Material runtime
 
-- buildable WinUI solution and projects;
-- x64 + ARM64 Windows build;
-- NuGet pack and package forbidden-asset scan;
-- repository policy checks.
+- `GlasslineGlassContainer` is a `ContentControl` with one `SystemBackdropElement` per grouped material region.
+- semantic roles: Sidebar, Toolbar, Popover, Interactive, Prominent.
+- quality: Auto / Full / Reduced / Solid.
+- deterministic policy: High Contrast or transparency-off → Solid; RDP/resize/inactive → Reduced; capable active local Auto/Full → Full.
+- current baseline: Full = Desktop Acrylic, Reduced = MicaAlt, Solid = semantic opaque surface.
+- GPU vendor/model allowlists and per-item backdrop pipelines are rejected by static contract tests.
 
-### PR #5 — Theme foundation
+### Controls / Accessibility source contract
 
-- Light/Dark/HighContrast semantic-resource contract validation;
-- x64 + ARM64 WinUI/XAML build;
-- Gallery resource merge;
-- NuGet pack/content scan;
-- repository policy checks.
+- `GlasslineSearchField` keeps a native TextBox as the input, text, selection, clipboard, IME, and rich automation-pattern engine.
+- `GlasslineSegmentedControl` keeps a native ListBox in single-selection mode.
+- each wrapper has a `FrameworkElementAutomationPeer` with stable Glassline class identity and Group control type; wrapper peers deliberately do not duplicate native TextBox/ListBox value/text/selection provider patterns.
 
-### PR #6 — C# custom/composite-control baseline
+### Gallery / Validation harness
 
-Final Windows build run `31689240636` passed:
+Stable validation scenes:
 
-- repository structural contract;
-- Theme resource contract;
-- Controls static/template contract;
-- x64 restore/build;
-- ARM64 restore/build;
-- Theme/Controls/Effects NuGet pack;
-- forbidden-asset package-content scan;
-- fresh WinUI app restore/build against generated `Glassline.WinUI.Controls` NuGet with no Glassline `ProjectReference`;
-- NuGet artifact upload.
+- `window-foundation`
+- `material-regions`
+- `controls-matrix`
+- `benchmark-settings`
+- `benchmark-grid`
+- `benchmark-tree`
 
-Repository policy run `31689240591` also passed. A preceding strengthened run exposed an incorrect NuGet-source invocation; that CI defect was fixed and the full matrix was rerun successfully rather than accepting a partial result.
+Gallery tracks native window activation and recent resize state, applies them to material regions, exposes environment/material diagnostics, and gives scenes stable AutomationIds for future screenshot/UIA/performance drivers.
 
-## Native validation still pending for the first controls
+Benchmark workload sizes are executable CI contracts:
 
-Hosted compilation/package CI is not final component Definition of Done. The following require an interactive Windows 11 desktop and remain pending:
+- Settings: exactly 100 rows.
+- Productivity Grid: exactly 500 items.
+- Tree: exactly 100 roots × 50 children = 5000 non-root nodes.
 
-- pointer-over / pressed / keyboard-focus visual-state inspection;
-- Narrator + UI Automation role/name/state/value inspection;
-- Korean 2-set, Japanese, and Simplified Chinese IME composition/candidate-window tests for `GlasslineSearchField`;
-- clipboard/selection/undo/redo smoke tests;
-- 100/125/150/200% DPI and text-scaling inspection;
-- Light/Dark/High Contrast visual capture;
-- RTL and long-localized-string smoke tests;
-- active/inactive window behavior;
-- screenshot golden-baseline approval.
+### Research
 
-Until those entries are recorded, `GlasslineSearchField` and `GlasslineSegmentedControl` are **engineering baselines**, not visually complete or release-ready components.
+- public corpus: 70 metadata-only macOS 26 Tahoe scene rows, all external-reference-only.
+- AppleReferenceLab: buttons, toggle/slider, text input, pickers, sidebar, toolbar, menu/popover, window, accessibility-state scenes.
+- AppleReferenceLab scene catalog/selection tests and release build run on macOS 26 CI.
+- neither the corpus index nor AppleReferenceLab compilation is treated as a substitute for observed measurements.
+
+### Packaging / supply chain
+
+- Theme/Controls/Effects packages are generated in CI.
+- .NET package validation is enabled.
+- generated nuspec metadata and package dependency boundaries are checked.
+- forbidden font/design-asset extensions are rejected from packages.
+- a fresh WinUI consumer restores generated `Glassline.WinUI.Controls` and compiles without a Glassline project reference.
+- an SPDX 2.2 SBOM is generated and validated for the package artifact set.
+
+## Hosted evidence vs native evidence
+
+The authoritative boundary is [`engineering/ENVIRONMENT_BOUNDARY.md`](engineering/ENVIRONMENT_BOUNDARY.md).
+
+Hosted green CI is valid evidence for compilation, static contracts, deterministic pure logic, package construction/consumption, corpus metadata rules, and AppleReferenceLab buildability. It is **not** evidence for pixel appearance, compositor quality, Narrator behavior, IME candidate UI, real DPI/multi-monitor behavior, pointer/touch interaction, RDP experience, or performance numbers.
 
 ## Next 10 actions
 
-1. Populate `research/corpus-index/corpus-index.csv` with at least 50 scenes and source IDs.
-2. Populate the first measurement set for Button, Toggle, Slider, Sidebar, Toolbar, and Popover.
-3. Create a buildable `research/AppleReferenceLab` macOS project and capture Light/Dark + interaction states.
-4. Run/record native Windows interactive acceptance for `GlasslineSearchField` and `GlasslineSegmentedControl` using `docs/engineering/CONTROLS_NATIVE_ACCEPTANCE.md`.
-5. Implement the M1 system Mica/Solid window foundation while preserving the existing semantic Theme contract.
-6. Add Gallery diagnostics for material mode, window activation, resize, active glass-region count, and total glass area.
-7. Prototype one shared `GlassContainer`-style toolbar/sidebar material region using baseline Windows Composition only.
-8. Implement `MaterialCapabilities` + `MaterialQualityManager` and verify Full → Reduced → Solid, continuous-resize downgrade, and inactive/background suppression.
-9. Add deterministic screenshot, UIA, IME, DPI, and runtime Gallery validation harnesses on appropriate Windows infrastructure.
-10. Start additional P0 controls only when their Definition of Ready evidence is satisfied; do not treat the two engineering baselines as permission to bypass M0 research gates.
+These are now primarily evidence/tuning tasks rather than more speculative source expansion:
 
-## Open blockers / decisions
+1. Run AppleReferenceLab on an interactive macOS 26 reference machine and capture the required Light/Dark, active/inactive, state, size, and accessibility variants.
+2. Populate the first observed measurement-ledger rows for Button, Toggle, Slider, Sidebar, Toolbar, and Popover; classify each value as Observed/Inferred/Glassline decision.
+3. Capture native Windows Gallery window-foundation and material-region baselines for Light/Dark/High Contrast, active/inactive, Full/Reduced/Solid.
+4. Execute live Narrator/UIA tree/provider tests for SearchField and SegmentedControl; verify native TextBox/ListBox patterns remain accessible without duplicate wrapper announcements.
+5. Execute Korean, Japanese, and Simplified Chinese IME composition/candidate tests plus clipboard/selection/undo/redo tests.
+6. Verify 100/125/150/200% display scale, agreed text-scale matrix, RTL/long localization, and mixed-DPI multi-monitor movement.
+7. Verify Snap, maximize/restore, resize, system menu, Alt+F4, mouse, precision touchpad, touch where available, and local/RDP transitions.
+8. Run the deterministic benchmark scenes on agreed reference Windows hardware and record P50/P95/P99 frame time, memory delta, available GPU signals, material-region count/area, and effective mode.
+9. Decide from evidence whether built-in Desktop Acrylic is acceptable for Full or whether a custom Composition material is warranted; only then tune final optical values.
+10. After native acceptance and first preview API review, publish the first real package baseline and activate cross-version API compatibility against that package.
 
-- C++/WinRT support boundary beyond the Theme-first policy is not finalized.
-- Icon provenance strategy is not finalized.
-- Preview NuGet feed and release publishing workflow are not finalized.
-- Screenshot CI runner/reference GPU and visual reviewer policy are not finalized.
-- Native interactive Windows acceptance infrastructure/device access is still required for UIA/IME/DPI/visual DoD.
-- AppleReferenceLab requires a native macOS environment for reference capture; this is research validation, not a shipping dependency.
+## Current blockers / evidence-dependent decisions
 
-## Update protocol
-
-When a task changes:
-
-1. Change its checkbox/state here.
-2. Add the evidence path, commit, PR, or issue.
-3. Update milestone accounting.
-4. If the change alters an architecture/product rule, update or add an ADR.
-5. Add a short entry to the status change log.
+- observed reference measurements are the remaining M0 task blocker;
+- reference Windows CPU/GPU/RAM/display/driver and screenshot reviewer policy must be chosen;
+- final Full material implementation is provisional until native visual/performance evidence exists;
+- C++/WinRT Theme support boundary and icon-provenance strategy remain open;
+- preview NuGet feed/release workflow remains intentionally deferred;
+- cross-version API compatibility requires the first real published package baseline.
 
 ## Status change log
 
-- **2026-08-13:** PR #6 merged the first C# custom/composite-control engineering baselines (`GlasslineSearchField`, `GlasslineSegmentedControl`), Gallery integration, static/template contract validation, NuGet package-consumer smoke app, and native-acceptance ledger. Final x64/ARM64/build/pack/package-consumer/policy gates passed.
-- **2026-08-13:** PR #5 merged the semantic Theme foundation with Light/Dark/HighContrast resource contracts and Windows XAML/build/package validation.
-- **2026-08-13:** PR #4 converted the repository from documentation-only scaffold to a real WinUI solution/projects and Windows CI baseline. The first CI run exposed a TFM/minimum-platform mismatch; it was corrected to build 22000 and the full x64/ARM64/package matrix passed.
-- **2026-08-13:** Material architecture clarified from the source blueprints and design discussion: Mica/Solid foundation, shared GlassContainer-style regions, semantic roles, runtime quality downgrade, material-specific perf instrumentation, and ADR-0010 added.
-- **2026-08-13:** Public README refreshed; local-only research artifacts removed from the public tree; repository policy workflow verified passing.
-- **2026-08-13:** Project renamed/finalized as `Glassline.WinUI`; public repository created; MIT selected; repository bootstrap moved to Done.
-- **2026-08-13:** Initial repository structure and living status documentation established.
+- **2026-08-13:** Hosted implementation pass completed through native Mica/Solid window foundation, shared adaptive material runtime, deterministic Gallery diagnostics, benchmark workloads, non-invasive AutomationPeers, 70-row public-safe corpus, buildable AppleReferenceLab/macOS 26 CI, package validation, generated-package consumer validation, and SBOM supply-chain checks.
+- **2026-08-13:** M0 accounting advanced to 5/6 complete + 1 partial. M0 remains open because observed measurement-ledger evidence has not been captured.
+- **2026-08-13:** Earlier build, Theme, Controls, material-architecture, repository/bootstrap, naming, and licensing baselines established.

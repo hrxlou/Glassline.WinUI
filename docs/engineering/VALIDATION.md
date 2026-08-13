@@ -1,159 +1,157 @@
-# Validation Engineering
+# Validation Strategy
 
-# Part F — Validation engineering
+## Purpose
 
-## 18. Visual regression strategy
+Glassline validation separates **hosted engineering evidence** from **native interactive evidence**. A green build is useful, but it is not a screenshot, Narrator, IME, DPI, RDP, or performance result.
 
-### Baseline 종류
+The authoritative environment/evidence boundary is [`ENVIRONMENT_BOUNDARY.md`](ENVIRONMENT_BOUNDARY.md).
 
-1. **Reference baseline** — 실제 macOS / AppleReferenceLab. 배포 artifact 아님.
-2. **Glassline golden baseline** — 우리 Gallery screenshot. CI에 저장.
-3. **Interaction baseline** — press/open/close animation keyframe/gif/video.
+## Hosted validation implemented as of 2026-08-13
 
-### CI image matrix
+### Repository/static contracts
 
-- Light / Dark
-- active / inactive
-- accent blue + graphite-like neutral + one alternate accent
-- Full / Reduced / Solid effect modes
-- 100 / 150 / 200% scale의 대표 subset
+Windows CI validates:
 
-### 승인 방식
+- required repository/project structure and dependency boundaries;
+- forbidden public/private research artifact patterns;
+- Theme resource-dictionary structure and required semantic roles;
+- Controls native-composition/template-part contracts;
+- composite wrapper AutomationPeer identity and prohibition on duplicate native provider patterns;
+- window-backdrop use of native WinUI `SystemBackdrop` plus mandatory High Contrast/transparency Solid policy;
+- material roles/quality signals/grouping contract and prohibition on per-child/custom-refraction pipelines in the baseline;
+- Gallery deterministic scene IDs, AutomationIds, activation/resize propagation, diagnostics, and benchmark construction contracts;
+- public corpus row count/provenance/external-only/no-guessed-measurement rules.
 
-pixel diff 하나로 승인하지 않는다.
+### Executable deterministic smoke tests
 
-- perceptual diff
-- geometry diff
-- semantic reviewer checklist
-- known antialiasing tolerance
+Hosted Windows CI executes:
 
-**목표는 Apple screenshot과의 pixel score가 아니라, Glassline golden baseline이 의도 없이 변하지 않는 것**이다.
+- MaterialQualityManager policy cases: normal, explicit Reduced/Solid, High Contrast, effects-disabled, RDP, resize, inactive;
+- Gallery scene selection/precedence/fallback cases;
+- exact deterministic benchmark data cases: Settings 100, Grid 500, Tree 5000 non-root nodes.
 
----
+These are pure/logic evidence; they do not render or interact with a desktop.
 
-## 19. Accessibility / input matrix
+### WinUI build matrix
 
-### Native control 우선 이유
+- x64 restore + Release build on Windows runner;
+- ARM64 restore + Release build on Windows runner;
+- WinUI XAML compilation includes Gallery and control templates;
+- warnings are treated as errors.
 
-ControlTemplate만 바꾸면 WinUI가 제공하는 input/accessibility logic를 최대한 보존할 수 있다.
+### NuGet/package-consumer validation
 
-### Custom control 의무
+- Theme, Controls, and Effects packages are packed;
+- .NET package validation is enabled;
+- actual generated nuspec metadata and dependency boundaries are inspected;
+- forbidden font/design-asset extensions are scanned after package expansion;
+- a separate WinUI consumer restores the generated local `Glassline.WinUI.Controls` package with no Glassline ProjectReference and compiles it;
+- SPDX 2.2 SBOM is generated and validated for the package artifact set.
 
-- AutomationPeer
-- keyboard navigation
-- focus order
-- name / role / state / value
-- high contrast
-- text scaling
-- RTL
-- localization
-- disabled/selected semantics
-- touch/pointer
-- drag/drop
+Cross-version package/API compatibility is not yet a truthful lane because Glassline has no published prior package baseline. The first real preview release should establish the baseline used by later compatibility checks.
 
-### IME matrix
+### macOS research-probe validation
 
-- Korean 2-set
-- Japanese IME composition / candidate window
-- Simplified Chinese Pinyin composition
-- emoji / symbol insertion
-- password field behavior
+A dedicated macOS 26 workflow:
 
-Text input visual을 새로 만들더라도 **실제 WinUI TextBox/AutoSuggestBox를 내부 입력 엔진으로 유지**한다.
+- reports the hosted macOS/Xcode/Swift toolchain;
+- runs AppleReferenceLab scene-catalog and deterministic selection tests;
+- builds the native SwiftUI/AppKit probe in Release configuration.
 
----
+This proves the probe is buildable. It does not create approved reference captures or measurements.
 
-## 20. Performance plan
+## Native Windows acceptance matrix
 
-성능 budget은 reference hardware를 M0에 고정한 뒤 CI 기준으로 확정한다. 초기 목표:
+The following require an interactive Windows environment.
 
-- standard interactive scene: 60 Hz에서 visible jank 없음
-- resize 중 effect chain이 layout thread를 blocking하지 않음
-- virtualized List/Tree scroll에서 glass layer가 item virtualization을 깨지 않음
-- inactive/background window의 animation 최소화
-- RDP / low-end GPU / effects-disabled에서 자동 Reduced/Solid downgrade
-- compositor resource leak 0
-- grouped controls use shared material regions rather than per-control live backdrop pipelines
+### Visual / material
 
-### Material-specific runtime rules
+- Light / Dark / High Contrast;
+- active / inactive;
+- Full / Reduced / Solid;
+- transparency effects live on/off;
+- window foundation, Sidebar, Toolbar, controls, transient surfaces;
+- screenshot golden capture and perceptual/geometry review.
 
-- Normal capable local session may use `Full`.
-- Continuous window resize must temporarily use `Reduced` for expensive material work: advanced refraction off, blur/effect complexity reduced, nonessential continuous pointer/specular animation suppressed.
-- Inactive/background windows stop nonessential continuous material animation and may use a cheaper/static material state.
-- High Contrast/effects-disabled forces `Solid`.
-- Slow/unsupported composition effects must switch to a simpler graph instead of attempting the Full graph.
-- Virtualized rows/items use semantic fills for normal/hover/selection and do not own independent live backdrop brushes.
+### Accessibility / UIA
 
-### Benchmark scenes
+- Narrator role/name/value/state;
+- UI Automation tree shape;
+- wrapper Group peer behavior without duplicate announcements;
+- native TextBox edit/text/value patterns through SearchField;
+- native ListBox selection patterns through SegmentedControl;
+- keyboard-only navigation and visible focus.
 
-1. Settings 100 rows + one sidebar region + toolbar region
-2. productivity/file-browser grid 500 items + selection + scrolling
-3. Tree 5k nodes lazy expanded
-4. Popover/menu rapid open-close
-5. continuous window resize 10s with mode-transition trace
-6. Light↔Dark / active↔inactive transition
-7. multi-window scene: active + inactive/background window
-8. glass-region stress scene: same visible UI rendered with grouped regions vs deliberately fragmented regions for diagnostic comparison
+### Text / IME / localization
 
-### Required measurements
+- Korean IME composition/candidate flow;
+- Japanese IME composition/candidate flow;
+- Simplified Chinese IME composition/candidate flow;
+- clipboard, selection, undo/redo;
+- long localized strings;
+- RTL;
+- agreed text-scale matrix.
 
-Release-performance evidence should record, where the selected tooling can capture it reliably:
+### DPI / window / input
 
-- frame-time P50 / P95 / P99;
+- 100%, 125%, 150%, 200% display scale;
+- mixed-DPI multi-monitor movement;
+- Snap layouts;
+- maximize/restore;
+- system menu;
+- continuous resize;
+- Alt+F4;
+- mouse hover/press;
+- precision touchpad;
+- touch where hardware is available;
+- local/RDP transitions.
+
+### Performance
+
+Deterministic workloads:
+
+- Settings 100 rows;
+- productivity Grid 500 items;
+- Tree 5000 non-root nodes;
+- rapid menu/popover open-close scenario;
+- continuous resize for at least 10 seconds.
+
+Record, where available:
+
+- frame-time P50/P95/P99;
 - process memory delta;
-- GPU utilization;
-- GPU memory delta;
-- power/energy signal when available;
-- active glass-region count;
-- total glass pixel area or percentage of window area;
-- material mode (`Full`, `Reduced`, `Solid`);
-- refraction enabled/disabled;
-- active/inactive and resize state.
+- GPU utilization/memory signals;
+- active material-region count;
+- approximate total material-region area;
+- effective material mode;
+- reference CPU/GPU/RAM/display scale/Windows build/driver.
 
-The cost model to watch is approximately **glass area × region count × effect complexity × update frequency**. FPS alone is not sufficient evidence.
+Do not lock a numerical performance budget from GitHub-hosted runner timing.
 
-### M2 material gate
+## Native macOS acceptance matrix
 
-The M2 Glass Engine does not pass merely because a single isolated panel looks correct. It must demonstrate:
+Run AppleReferenceLab interactively and capture applicable scenes in:
 
-- stable Sidebar + Toolbar together;
-- predictable Full → Reduced → Solid transitions;
-- no per-row live backdrop strategy in virtualized data scenes;
-- no advanced refraction requirement for visual coherence;
-- continuous resize remains responsive with the Reduced policy;
-- inactive/background material activity is measurably lower or static;
-- no compositor resource leak across repeated open/close/theme/state transitions.
+- Light / Dark;
+- Active / Inactive;
+- Normal / Hover / Pressed / Focused / Disabled / Selected;
+- control-size variants;
+- accent variants;
+- Reduce Transparency / Increase Contrast / Reduce Motion states;
+- resize/scroll variants;
+- menu/popover transitions.
 
-Release 전에 measurements, resize behavior, material mode transitions, and region counts are written to `PERF_BUDGET.md`/trace artifacts. Numeric budgets are locked after benchmark hardware is selected.
+Observed values enter `research/measurements/measurement-ledger.csv` only after the scene itself is inspected and the value is classified as Observed, Inferred, or Glassline decision.
 
----
+## Release evidence gate
 
-## 21. Test project layout
+Before preview/release readiness is claimed, at minimum:
 
-```text
-tests/
-├─ Glassline.UnitTests/
-├─ Glassline.ResourceTests/
-├─ Glassline.VisualTests/
-├─ Glassline.AutomationTests/
-├─ Glassline.InputTests/
-├─ Glassline.PerformanceTests/
-└─ baselines/
-   ├─ light/
-   ├─ dark/
-   ├─ solid/
-   └─ interaction/
-```
-
-### CI minimum
-
-- build x64 + ARM64
-- pack NuGet
-- unit/resource tests
-- deterministic Gallery launch
-- selected screenshot baselines
-- API compatibility check
-- dependency license/SBOM generation
-- package content scan for forbidden assets
-
----
+- hosted CI remains green;
+- native Windows visual/UIA/IME/DPI/window/input matrices have recorded evidence;
+- reference-hardware performance evidence exists;
+- required AppleReferenceLab/measurement evidence exists for the shipped visual decisions;
+- packages contain no forbidden assets;
+- SBOM/license/package metadata are valid;
+- public API review is complete;
+- once a prior public package exists, cross-version API compatibility is green against that real baseline.
