@@ -22,6 +22,20 @@ jobs:
       - name: Validate Controls static/template contract
         shell: pwsh
         run: ./eng/scripts/validate-controls.ps1
+      - name: Validate material runtime contract
+        shell: pwsh
+        run: ./eng/scripts/validate-materials.ps1
+
+  material-policy-smoke:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Execute deterministic material policy cases
+        shell: pwsh
+        run: dotnet run --project tests/Glassline.MaterialPolicySmoke/Glassline.MaterialPolicySmoke.csproj -c Release -p:Platform=x64
 
   build:
     runs-on: windows-latest
@@ -43,7 +57,7 @@ jobs:
 
   pack:
     runs-on: windows-latest
-    needs: build
+    needs: [build, material-policy-smoke]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
