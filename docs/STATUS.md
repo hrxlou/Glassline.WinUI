@@ -32,7 +32,7 @@ The product, architecture, validation, and research specifications are organized
 | M2 glass implementation | Not started | `GlassContainer`/quality manager are architecture only; HTML/CSS lab does not count as shipping effects code |
 | P0 controls | Not started | deep implementation waits for M0 exit criteria |
 | Gallery / executable tests | Planned | structure and acceptance rules exist; harness not yet implemented |
-| Repository policy CI | **Passing before this docs update** | push workflow was active and passing on the previous main commit; re-check after material-doc commit |
+| Repository policy CI | **Passing** | material-architecture commit `d4bc0f0` passed Repository policy checks run #4 |
 
 ## M0 task accounting
 
@@ -95,7 +95,7 @@ When a task changes:
 
 ## Status change log
 
-- **2026-08-13:** Material architecture clarified from the source blueprints and design discussion: Mica/Solid foundation, shared GlassContainer-style regions, semantic roles, runtime quality downgrade, material-specific perf instrumentation, and ADR-0010 added.
+- **2026-08-13:** Material architecture clarified from the source blueprints and design discussion: Mica/Solid foundation, shared GlassContainer-style regions, semantic roles, runtime quality downgrade, material-specific perf instrumentation, and ADR-0010 added. Repository policy checks passed on commit `d4bc0f0`.
 - **2026-08-13:** Public README refreshed; local-only research artifacts removed from the public tree; repository policy workflow verified passing.
 - **2026-08-13:** Project renamed/finalized as `Glassline.WinUI`; public repository created; MIT selected; repository bootstrap moved to Done.
 - **2026-08-13:** Initial repository structure and living status documentation established.
