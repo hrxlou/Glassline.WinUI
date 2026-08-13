@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Glassline.GallerySceneSmoke</RootNamespace>
+    <AssemblyName>Glassline.GallerySceneSmoke</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\samples\Glassline.Gallery\GallerySceneIds.cs" Link="GallerySceneIds.cs" />
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+</Project>

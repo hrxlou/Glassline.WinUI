@@ -10,43 +10,93 @@
             Background="{ThemeResource Glassline.Surface.Window}"
             IsHitTestVisible="False" />
         <ScrollViewer>
-            <StackPanel Padding="32" Spacing="20">
+            <StackPanel x:Name="GalleryRoot" Padding="32" Spacing="20">
                 <TextBlock Style="{StaticResource TitleTextBlockStyle}" Foreground="{ThemeResource Glassline.Text.Primary}" Text="Glassline.WinUI" />
+                <TextBlock x:Name="RequestedSceneStatus" Style="{StaticResource Glassline.CaptionTextStyle}" />
 
-                <Border Background="{ThemeResource Glassline.Surface.Group}" CornerRadius="{StaticResource Glassline.Radius.Group}" Padding="16">
+                <Border
+                    x:Name="DiagnosticsPanel"
+                    Padding="12"
+                    Background="{ThemeResource Glassline.Surface.Group}"
+                    CornerRadius="{StaticResource Glassline.Radius.Group}"
+                    AutomationProperties.AutomationId="Diagnostics.MaterialRuntime">
+                    <StackPanel Spacing="4">
+                        <TextBlock Style="{StaticResource Glassline.BodyTextStyle}" Text="Runtime diagnostics" />
+                        <TextBlock x:Name="BackdropStatus" Style="{StaticResource Glassline.CaptionTextStyle}" TextWrapping="Wrap" />
+                        <TextBlock x:Name="EnvironmentStatus" Style="{StaticResource Glassline.CaptionTextStyle}" TextWrapping="Wrap" />
+                        <TextBlock x:Name="MaterialStatus" Style="{StaticResource Glassline.CaptionTextStyle}" TextWrapping="Wrap" />
+                        <TextBlock x:Name="RegionStatus" Style="{StaticResource Glassline.CaptionTextStyle}" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    x:Name="SceneWindowFoundation"
+                    Padding="16"
+                    Background="{ThemeResource Glassline.Surface.Group}"
+                    CornerRadius="{StaticResource Glassline.Radius.Group}"
+                    AutomationProperties.AutomationId="Scene.WindowFoundation">
                     <StackPanel Spacing="8">
-                        <TextBlock Style="{StaticResource Glassline.BodyTextStyle}" Text="Semantic Theme foundation" />
-                        <TextBlock Style="{StaticResource Glassline.CaptionTextStyle}" Text="Glassline roles map onto native WinUI theme resources; optical glass is intentionally outside Theme." TextWrapping="Wrap" />
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Window foundation" />
+                        <TextBlock Style="{StaticResource Glassline.CaptionTextStyle}" Text="Native Window.SystemBackdrop supplies Mica when policy permits; the semantic window surface is restored for Solid mode." TextWrapping="Wrap" />
                         <Button Content="Native WinUI behavior" HorizontalAlignment="Left" />
                     </StackPanel>
                 </Border>
 
-                <glassline:GlasslineGlassContainer
-                    x:Name="ToolbarMaterialRegion"
-                    HorizontalAlignment="Left"
-                    AutomationProperties.Name="Shared toolbar material region"
-                    Material="Toolbar"
-                    Quality="Auto">
-                    <StackPanel Spacing="10">
-                        <TextBlock Style="{StaticResource Glassline.CaptionTextStyle}" Text="One material region owns the backdrop for this grouped toolbar." />
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <Button Content="Back" />
-                            <Button Content="Forward" />
-                            <Button Content="Share" />
+                <StackPanel
+                    x:Name="SceneMaterialRegions"
+                    Spacing="12"
+                    AutomationProperties.AutomationId="Scene.MaterialRegions">
+                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Shared material regions" />
+                    <glassline:GlasslineGlassContainer
+                        x:Name="SidebarMaterialRegion"
+                        AutomationProperties.Name="Shared sidebar material region"
+                        Material="Sidebar"
+                        Quality="Auto">
+                        <StackPanel Spacing="6">
+                            <TextBlock Style="{StaticResource Glassline.CaptionTextStyle}" Text="Sidebar region" />
+                            <Button Content="Overview" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" />
+                            <Button Content="Components" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" />
+                            <Button Content="Diagnostics" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" />
                         </StackPanel>
-                    </StackPanel>
-                </glassline:GlasslineGlassContainer>
+                    </glassline:GlasslineGlassContainer>
+                    <glassline:GlasslineGlassContainer
+                        x:Name="ToolbarMaterialRegion"
+                        HorizontalAlignment="Left"
+                        AutomationProperties.Name="Shared toolbar material region"
+                        Material="Toolbar"
+                        Quality="Auto">
+                        <StackPanel Spacing="10">
+                            <TextBlock Style="{StaticResource Glassline.CaptionTextStyle}" Text="Toolbar region" />
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Button Content="Back" />
+                                <Button Content="Forward" />
+                                <Button Content="Share" />
+                            </StackPanel>
+                        </StackPanel>
+                    </glassline:GlasslineGlassContainer>
+                </StackPanel>
 
-                <Border Background="{ThemeResource Glassline.Surface.Group}" CornerRadius="{StaticResource Glassline.Radius.Group}" Padding="16">
+                <Border
+                    x:Name="SceneControlsMatrix"
+                    Padding="16"
+                    Background="{ThemeResource Glassline.Surface.Group}"
+                    CornerRadius="{StaticResource Glassline.Radius.Group}"
+                    AutomationProperties.AutomationId="Scene.ControlsMatrix">
                     <StackPanel Spacing="12">
-                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="C# custom/composite control baseline" />
-                        <TextBlock Style="{StaticResource Glassline.CaptionTextStyle}" Text="Search input remains a native TextBox; segmented selection remains a native ListBox inside the composite control." TextWrapping="Wrap" />
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Controls matrix baseline" />
+                        <TextBlock Style="{StaticResource Glassline.CaptionTextStyle}" Text="Native TextBox and ListBox engines remain inside the Glassline composite controls." TextWrapping="Wrap" />
                         <glassline:GlasslineSearchField
                             x:Name="SearchField"
                             Width="320"
                             HorizontalAlignment="Left"
                             AutomationProperties.Name="Gallery search"
                             PlaceholderText="Search components" />
+                        <glassline:GlasslineSearchField
+                            Width="320"
+                            HorizontalAlignment="Left"
+                            IsEnabled="False"
+                            AutomationProperties.Name="Disabled gallery search"
+                            PlaceholderText="Disabled search" />
                         <glassline:GlasslineSegmentedControl
                             x:Name="SegmentedControl"
                             HorizontalAlignment="Left"
