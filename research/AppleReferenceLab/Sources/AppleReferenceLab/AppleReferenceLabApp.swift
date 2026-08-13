@@ -74,20 +74,62 @@ private struct ReferenceLabRootView: View {
     }
 }
 
+@MainActor
 private struct ReferenceHeader: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     let scene: ReferenceScene
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(scene.title)
                 .font(.title2)
-            Text("scene_id=\(scene.rawValue)")
+            Text("scene_id=\(scene.rawValue) appearance=\(colorScheme == .dark ? "dark" : "light")")
                 .font(.caption.monospaced())
                 .textSelection(.enabled)
-            Text(ProcessInfo.processInfo.operatingSystemVersionString)
-                .font(.caption)
+            Text("backing_scale=\(backingScaleDescription) os=\(ProcessInfo.processInfo.operatingSystemVersionString)")
+                .font(.caption.monospaced())
                 .foregroundStyle(.secondary)
+                .textSelection(.enabled)
+            CalibrationRule()
         }
+    }
+
+    private var backingScaleDescription: String {
+        guard let scale = NSScreen.main?.backingScaleFactor else {
+            return "unknown"
+        }
+
+        return String(format: "%.2f", scale)
+    }
+}
+
+/// A known-size rule rendered into every scene.
+///
+/// Screenshot pixels only become point measurements if the capture records its own scale. Without
+/// this, a ledger row measured from a capture cannot be classified as Observed, because the
+/// pixel-to-point conversion would itself be an assumption.
+private struct CalibrationRule: View {
+    private let stepPoints: CGFloat = 10
+    private let stepCount = 20
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            HStack(spacing: 0) {
+                ForEach(0..<stepCount, id: \.self) { index in
+                    Rectangle()
+                        .fill(index.isMultiple(of: 2) ? Color.primary : Color.clear)
+                        .frame(width: stepPoints, height: 12)
+                }
+            }
+            .border(Color.primary)
+
+            Text("calibration_rule=\(stepCount)x\(Int(stepPoints))pt total=\(Int(CGFloat(stepCount) * stepPoints))pt")
+                .font(.caption2.monospaced())
+                .foregroundStyle(.secondary)
+                .textSelection(.enabled)
+        }
+        .accessibilityIdentifier("ReferenceCalibrationRule")
     }
 }
 
