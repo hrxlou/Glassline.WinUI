@@ -1,0 +1,73 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+            <StaticResource x:Key="Glassline.Text.Primary" ResourceKey="TextFillColorPrimaryBrush" />
+            <StaticResource x:Key="Glassline.Text.Secondary" ResourceKey="TextFillColorSecondaryBrush" />
+            <StaticResource x:Key="Glassline.Text.Tertiary" ResourceKey="TextFillColorTertiaryBrush" />
+            <StaticResource x:Key="Glassline.Surface.Window" ResourceKey="SolidBackgroundFillColorBaseBrush" />
+            <StaticResource x:Key="Glassline.Surface.Group" ResourceKey="CardBackgroundFillColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Surface.Sidebar" ResourceKey="LayerFillColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Surface.Toolbar" ResourceKey="ControlFillColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Surface.Popover" ResourceKey="SolidBackgroundFillColorQuarternaryBrush" />
+            <StaticResource x:Key="Glassline.Separator.Subtle" ResourceKey="DividerStrokeColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Selection.Active" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Selection.Inactive" ResourceKey="SubtleFillColorSecondaryBrush" />
+            <StaticResource x:Key="Glassline.Accent" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Focus" ResourceKey="FocusStrokeColorOuterBrush" />
+            <StaticResource x:Key="Glassline.Destructive" ResourceKey="SystemFillColorCriticalBrush" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+            <StaticResource x:Key="Glassline.Text.Primary" ResourceKey="TextFillColorPrimaryBrush" />
+            <StaticResource x:Key="Glassline.Text.Secondary" ResourceKey="TextFillColorSecondaryBrush" />
+            <StaticResource x:Key="Glassline.Text.Tertiary" ResourceKey="TextFillColorTertiaryBrush" />
+            <StaticResource x:Key="Glassline.Surface.Window" ResourceKey="SolidBackgroundFillColorBaseBrush" />
+            <StaticResource x:Key="Glassline.Surface.Group" ResourceKey="CardBackgroundFillColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Surface.Sidebar" ResourceKey="LayerFillColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Surface.Toolbar" ResourceKey="ControlFillColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Surface.Popover" ResourceKey="SolidBackgroundFillColorQuarternaryBrush" />
+            <StaticResource x:Key="Glassline.Separator.Subtle" ResourceKey="DividerStrokeColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Selection.Active" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Selection.Inactive" ResourceKey="SubtleFillColorSecondaryBrush" />
+            <StaticResource x:Key="Glassline.Accent" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Focus" ResourceKey="FocusStrokeColorOuterBrush" />
+            <StaticResource x:Key="Glassline.Destructive" ResourceKey="SystemFillColorCriticalBrush" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="HighContrast">
+            <StaticResource x:Key="Glassline.Text.Primary" ResourceKey="TextFillColorPrimaryBrush" />
+            <StaticResource x:Key="Glassline.Text.Secondary" ResourceKey="TextFillColorSecondaryBrush" />
+            <StaticResource x:Key="Glassline.Text.Tertiary" ResourceKey="TextFillColorTertiaryBrush" />
+            <StaticResource x:Key="Glassline.Surface.Window" ResourceKey="SolidBackgroundFillColorBaseBrush" />
+            <StaticResource x:Key="Glassline.Surface.Group" ResourceKey="ControlFillColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Surface.Sidebar" ResourceKey="ControlFillColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Surface.Toolbar" ResourceKey="ControlFillColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Surface.Popover" ResourceKey="ControlFillColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Separator.Subtle" ResourceKey="ControlStrokeColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Selection.Active" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Selection.Inactive" ResourceKey="SubtleFillColorSecondaryBrush" />
+            <StaticResource x:Key="Glassline.Accent" ResourceKey="AccentFillColorDefaultBrush" />
+            <StaticResource x:Key="Glassline.Focus" ResourceKey="FocusStrokeColorOuterBrush" />
+            <StaticResource x:Key="Glassline.Destructive" ResourceKey="SystemFillColorCriticalBrush" />
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+    <FontFamily x:Key="Glassline.Typography.FontFamily">Segoe UI Variable Text</FontFamily>
+    <Thickness x:Key="Glassline.Spacing.ControlPadding">12,6</Thickness>
+    <Thickness x:Key="Glassline.Spacing.CompactControlPadding">10,4</Thickness>
+    <CornerRadius x:Key="Glassline.Radius.Control">8</CornerRadius>
+    <CornerRadius x:Key="Glassline.Radius.Group">12</CornerRadius>
+    <CornerRadius x:Key="Glassline.Radius.Popover">12</CornerRadius>
+
+    <Style x:Key="Glassline.BodyTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Glassline.Typography.FontFamily}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{ThemeResource Glassline.Text.Primary}" />
+    </Style>
+
+    <Style x:Key="Glassline.CaptionTextStyle" TargetType="TextBlock" BasedOn="{StaticResource Glassline.BodyTextStyle}">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="{ThemeResource Glassline.Text.Secondary}" />
+    </Style>
+</ResourceDictionary>
