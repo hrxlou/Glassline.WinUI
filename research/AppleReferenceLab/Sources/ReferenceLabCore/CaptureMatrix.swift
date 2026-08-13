@@ -90,24 +90,24 @@ public enum CaptureMatrix {
 
     /// Resolves the accessibility variant a live environment corresponds to.
     ///
-    /// Returns `nil` when the environment is not one of the required variants, so the probe can say
-    /// so on screen instead of letting an operator name a capture after a mode it was not taken in.
+    /// macOS 26.5.2 couples the two settings: enabling Increase Contrast also enables Reduce
+    /// Transparency and disables its switch. An isolated contrast variant therefore does not exist
+    /// to be captured, and requiring one made the variant unreachable for the whole 2026-08-14
+    /// session. `increaseContrast` accordingly wins over the coupled transparency setting instead of
+    /// resolving to a state no capture id describes.
     public static func accessibilityMode(
         reduceTransparency: Bool,
         increaseContrast: Bool
-    ) -> CaptureAccessibilityMode? {
-        switch (reduceTransparency, increaseContrast) {
-        case (false, false):
-            return .standard
-        case (true, false):
-            return .reduceTransparency
-        case (false, true):
+    ) -> CaptureAccessibilityMode {
+        if increaseContrast {
             return .increaseContrast
-        case (true, true):
-            // Both settings on is a real macOS state, but it is not one of the isolated variants
-            // the matrix requires, so no capture id describes it.
-            return nil
         }
+
+        if reduceTransparency {
+            return .reduceTransparency
+        }
+
+        return .standard
     }
 
     /// The capture this live environment would satisfy, or `nil` if it satisfies none.
@@ -118,12 +118,10 @@ public enum CaptureMatrix {
         reduceTransparency: Bool,
         increaseContrast: Bool
     ) -> CaptureDescriptor? {
-        guard let mode = accessibilityMode(
+        let mode = accessibilityMode(
             reduceTransparency: reduceTransparency,
             increaseContrast: increaseContrast
-        ) else {
-            return nil
-        }
+        )
 
         // Accessibility variants are only required for the active window.
         if mode != .standard, windowState != .active {
