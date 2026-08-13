@@ -13,6 +13,10 @@
 - Full uses built-in Desktop Acrylic for the functional region; Reduced uses built-in MicaAlt; Solid removes the region backdrop and exposes the semantic fallback surface.
 - No custom shader, displacement, refraction, Win2D, D2D, or D3D path exists in this baseline.
 
+## Native evidence recorded
+
+- 2026-08-14, Windows 11 Enterprise 10.0.26200, x64 Debug: `GlasslineGlassContainer` constructs its capability source from the live `XamlRoot.ContentIslandEnvironment` without throwing, and the Gallery reaches an interactive window. Launch survival only — no optical or performance claim is made here.
+
 ## Native Windows acceptance still required
 
 - [ ] Compare Full and Reduced regions in Light/Dark against approved reference measurements.

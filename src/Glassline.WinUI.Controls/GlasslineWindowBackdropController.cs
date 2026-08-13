@@ -1,4 +1,6 @@
 using Microsoft.UI.Composition.SystemBackdrops;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI.ViewManagement;
@@ -12,7 +14,11 @@ namespace Glassline.WinUI.Controls;
 public sealed class GlasslineWindowBackdropController : IDisposable
 {
     private readonly Window _window;
-    private readonly AccessibilitySettings _accessibilitySettings;
+
+    // ThemeSettings is the Win32/WinAppSDK replacement for AccessibilitySettings.
+    // AccessibilitySettings.HighContrastChanged depends on CoreWindow, which desktop apps do not have.
+    // The instance must stay referenced for the Changed event to keep firing.
+    private readonly ThemeSettings _themeSettings;
     private readonly UISettings _uiSettings;
     private GlasslineWindowBackdropKind _requestedKind;
     private GlasslineWindowBackdropKind _effectiveKind;
@@ -26,10 +32,10 @@ public sealed class GlasslineWindowBackdropController : IDisposable
 
         _window = window;
         _requestedKind = requestedKind;
-        _accessibilitySettings = new AccessibilitySettings();
+        _themeSettings = ThemeSettings.CreateForWindowId(window.AppWindow.Id);
         _uiSettings = new UISettings();
 
-        _accessibilitySettings.HighContrastChanged += OnHighContrastChanged;
+        _themeSettings.Changed += OnThemeSettingsChanged;
         _uiSettings.AdvancedEffectsEnabledChanged += OnAdvancedEffectsEnabledChanged;
 
         Refresh();
@@ -55,7 +61,7 @@ public sealed class GlasslineWindowBackdropController : IDisposable
 
     public GlasslineWindowBackdropKind EffectiveKind => _effectiveKind;
 
-    public bool IsHighContrast => _accessibilitySettings.HighContrast;
+    public bool IsHighContrast => _themeSettings.HighContrast;
 
     public bool AreAdvancedEffectsEnabled => _uiSettings.AdvancedEffectsEnabled;
 
@@ -89,7 +95,7 @@ public sealed class GlasslineWindowBackdropController : IDisposable
 
         GlasslineWindowBackdropKind next = ResolveEffectiveKind(
             _requestedKind,
-            _accessibilitySettings.HighContrast,
+            _themeSettings.HighContrast,
             _uiSettings.AdvancedEffectsEnabled);
 
         Apply(next);
@@ -110,7 +116,7 @@ public sealed class GlasslineWindowBackdropController : IDisposable
             return;
         }
 
-        _accessibilitySettings.HighContrastChanged -= OnHighContrastChanged;
+        _themeSettings.Changed -= OnThemeSettingsChanged;
         _uiSettings.AdvancedEffectsEnabledChanged -= OnAdvancedEffectsEnabledChanged;
         _disposed = true;
         GC.SuppressFinalize(this);
@@ -132,9 +138,31 @@ public sealed class GlasslineWindowBackdropController : IDisposable
         };
     }
 
-    private void OnHighContrastChanged(AccessibilitySettings sender, object args) => Refresh();
+    private void OnThemeSettingsChanged(ThemeSettings sender, object args) => Refresh();
 
-    private void OnAdvancedEffectsEnabledChanged(UISettings sender, object args) => Refresh();
+    // UISettings events are raised on a background thread, and Refresh mutates Window.SystemBackdrop.
+    private void OnAdvancedEffectsEnabledChanged(UISettings sender, object args)
+    {
+        DispatcherQueue dispatcherQueue = _window.DispatcherQueue;
+
+        if (dispatcherQueue is null || dispatcherQueue.HasThreadAccess)
+        {
+            RefreshIfLive();
+            return;
+        }
+
+        dispatcherQueue.TryEnqueue(RefreshIfLive);
+    }
+
+    private void RefreshIfLive()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        Refresh();
+    }
 
     private void ThrowIfDisposed()
     {

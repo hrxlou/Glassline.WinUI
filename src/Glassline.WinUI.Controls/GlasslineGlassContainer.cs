@@ -1,4 +1,5 @@
 using Microsoft.UI.Composition.SystemBackdrops;
+using Microsoft.UI.Content;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -125,9 +126,19 @@ public sealed class GlasslineGlassContainer : ContentControl
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        capabilities ??= new GlasslineMaterialCapabilities();
-        capabilities.Changed -= OnCapabilitiesChanged;
-        capabilities.Changed += OnCapabilitiesChanged;
+        // ThemeSettings is per-window, so capabilities can only be created once the element
+        // is in a live XamlRoot and its owning window id is known. A host that projects the
+        // element without a content island cannot supply one; RefreshMaterial then falls back
+        // to Solid rather than failing the load.
+        ContentIslandEnvironment? islandEnvironment = XamlRoot?.ContentIslandEnvironment;
+
+        if (islandEnvironment is not null)
+        {
+            capabilities ??= new GlasslineMaterialCapabilities(islandEnvironment.AppWindowId);
+            capabilities.Changed -= OnCapabilitiesChanged;
+            capabilities.Changed += OnCapabilitiesChanged;
+        }
+
         RefreshMaterial();
     }
 

@@ -33,6 +33,7 @@ GitHub-hosted Windows runners are valid evidence for:
 - WinUI XAML compilation;
 - warnings-as-errors build health;
 - deterministic source/resource/template/architecture contracts;
+- absence of CoreWindow-dependent UWP APIs in desktop source, and `DispatcherQueue` marshalling for background-thread `UISettings` events;
 - pure material-policy, scene-selection, and benchmark-data execution;
 - NuGet pack success;
 - generated package metadata/dependency structure;
@@ -44,6 +45,7 @@ GitHub-hosted Windows runners are valid evidence for:
 
 It does **not** prove:
 
+- that the app survives startup on a real desktop session;
 - that Mica/Acrylic/custom Composition looks correct on a desktop;
 - pixel/screenshot fidelity;
 - animation or pointer interaction quality;
@@ -122,6 +124,8 @@ The capture procedure and scene catalog live in `../../research/AppleReferenceLa
 These equivalences are prohibited:
 
 - **compile success ≠ visual pass**
+- **compile success ≠ the app starts** (WinUI 3 desktop apps compile cleanly against UWP APIs that throw at runtime)
+- **static desktop-API scan ≠ launch evidence**
 - **XAML compile ≠ screenshot pass**
 - **AutomationPeer source ≠ Narrator/UIA behavior pass**
 - **native TextBox in template ≠ IME candidate-window pass**
