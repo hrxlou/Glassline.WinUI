@@ -1,0 +1,10 @@
+# Record every third-party source or asset before it enters shipping/public artifacts.
+# Example schema:
+# - name: example
+#   source: https://example.com
+#   license: MIT
+#   used_in: path/to/file
+#   modified: true
+#   reviewed_by: null
+#   review_date: null
+entries: []

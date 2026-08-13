@@ -1,0 +1,30 @@
+# Visual Studio / .NET
+.vs/
+**/bin/
+**/obj/
+artifacts/
+TestResults/
+*.user
+*.suo
+*.nupkg
+*.snupkg
+*.appx
+*.msix
+*.msixbundle
+
+# IDE
+.idea/
+.vscode/*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local-only material
+.private/
+.local-research/
+
+# Local captures and temporary visual diffs
+research/**/captures-private/
+tests/baselines/**/actual/
+tests/baselines/**/diff/

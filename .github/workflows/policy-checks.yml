@@ -1,0 +1,48 @@
+name: Repository policy checks
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  repository-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Reject private payloads and bundled font files
+        shell: bash
+        run: |
+          set -euo pipefail
+          bad=0
+          while IFS= read -r -d '' f; do
+            case "$f" in
+              .private/*|.local-research/*) echo "Local-only file must not be tracked: $f"; bad=1 ;;
+            esac
+            case "${f,,}" in
+              *.ttf|*.otf|*.ttc) echo "Font file requires explicit provenance/review: $f"; bad=1 ;;
+            esac
+          done < <(git ls-files -z)
+          test "$bad" -eq 0
+
+      - name: Validate repository identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -d src/Glassline.WinUI.Theme
+          test -d src/Glassline.WinUI.Controls
+          test -d src/Glassline.WinUI.Effects
+          test -d samples/Glassline.Gallery
+
+      - name: Require license and public project documents
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q '^MIT License$' LICENSE
+          test -f README.md
+          test -f docs/STATUS.md
+          test -f docs/legal/TRADEMARKS.md

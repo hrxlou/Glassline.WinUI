@@ -1,0 +1,9 @@
+<Project>
+  <!-- Bootstrap pin verified against microsoft/WindowsAppSDK latest stable release on 2026-08-13. -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="2.3.1" />
+  </ItemGroup>
+</Project>
