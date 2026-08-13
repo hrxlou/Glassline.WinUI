@@ -1,7 +1,7 @@
 # Project Status
 
 > **Update this file whenever milestone or evidence state changes.**  
-> Last updated: **2026-08-13**  
+> Last updated: **2026-08-14**  
 > Current project phase: **M0 — Corpus & Decisions, blocked on observed measurement evidence**  
 > Parallel engineering baseline: **M1/M2/M3 work has started and is CI-validated where hosted execution is meaningful**  
 > Remote repository: `hrxlou/Glassline.WinUI`  
@@ -13,6 +13,8 @@ Glassline.WinUI has moved well beyond a documentation-only repository. The repo 
 
 The project **remains in M0** because the reference-measurement task is intentionally not faked. The corpus index and AppleReferenceLab source are ready, but `research/measurements/measurement-ledger.csv` does not yet contain the observed Button/Toggle/Slider/Sidebar/Toolbar/Popover measurements needed to turn references into evidence-backed Glassline decisions.
 
+Until 2026-08-14 none of that Windows baseline had ever run. `AccessibilitySettings.HighContrastChanged` requires a `CoreWindow`, which WinUI 3 desktop apps do not have, so the Gallery threw during startup on every launch while CI stayed green. Every "implemented baseline" row below was compile-and-contract evidence only. The Gallery now reaches an interactive window, which unblocks native-acceptance actions 3–8 for the first time; those actions were previously not merely undone but impossible.
+
 The current material implementation is therefore an engineering scaffold, not final Tahoe/Liquid-Glass fidelity: **native Mica/Solid window foundation → grouped `GlasslineGlassContainer` regions → adaptive Full/Reduced/Solid policy → optional advanced optics later**. Full currently uses built-in Desktop Acrylic and Reduced uses MicaAlt; those choices remain provisional until native visual/performance review.
 
 ## Progress snapshot
@@ -22,8 +24,8 @@ The current material implementation is therefore an engineering scaffold, not fi
 | Product contract / scope | Done for M0 | Windows-native behavior boundary and non-goals documented |
 | Architecture/package contract | Implemented baseline | Theme / Controls / Effects / Gallery projects and dependency boundaries exist |
 | Semantic Theme | Partial M1 — implemented baseline | Light/Dark/High Contrast resources compile; native visual tuning remains |
-| Window foundation | Partial M1 — implemented baseline | `Window.SystemBackdrop` Auto/Mica/MicaAlt/Solid controller; native appearance/DPI/window acceptance pending |
-| Shared material runtime | Partial M2 — implemented baseline | one grouped backdrop region, role/quality contracts, environment policy, Full/Reduced/Solid |
+| Window foundation | Partial M1 — implemented baseline | `Window.SystemBackdrop` Auto/Mica/MicaAlt/Solid controller; first desktop launch recorded 2026-08-14; native appearance/DPI/window acceptance pending |
+| Shared material runtime | Partial M2 — implemented baseline | one grouped backdrop region, role/quality contracts, environment policy, Full/Reduced/Solid; capability source constructs on a live `XamlRoot` without throwing |
 | Advanced optical/refraction path | Not started by design | blocked until baseline native visual/performance evidence |
 | P0 composite controls | Partial M3 — engineering baseline | SearchField + SegmentedControl compile/package; native interactive DoD pending |
 | Composite AutomationPeers | Implemented baseline | wrapper Group/class identity; live UIA/Narrator tree/provider behavior pending |
@@ -32,7 +34,7 @@ The current material implementation is therefore an engineering scaffold, not fi
 | Public Tahoe corpus index | **Done for M0 metadata task** | 70 unique metadata rows; no images or guessed measurements |
 | AppleReferenceLab skeleton | **Done for M0 buildable-probe task** | SwiftUI/AppKit probe tests + release build pass on macOS 26 CI; interactive capture pending |
 | Measurement ledger | **Partial — M0 blocker** | schema/header exists; observed measurement rows still required |
-| Windows CI | Passing baseline | static contracts, pure smokes, x64/ARM64 build, pack/package consumer |
+| Windows CI | Passing baseline | static contracts, pure smokes, x64/ARM64 build, pack/package consumer, desktop-runtime API contract |
 | Package/supply-chain validation | Implemented baseline | package validation, generated nuspec/dependency checks, forbidden assets, SPDX SBOM |
 | Public NuGet | Not started | intentionally blocked on native acceptance/API-release decision |
 | Cross-version API compatibility | Prepared but inactive | no real released Glassline package exists yet to serve as truthful baseline |
@@ -113,7 +115,7 @@ Benchmark workload sizes are executable CI contracts:
 
 The authoritative boundary is [`engineering/ENVIRONMENT_BOUNDARY.md`](engineering/ENVIRONMENT_BOUNDARY.md).
 
-Hosted green CI is valid evidence for compilation, static contracts, deterministic pure logic, package construction/consumption, corpus metadata rules, and AppleReferenceLab buildability. It is **not** evidence for pixel appearance, compositor quality, Narrator behavior, IME candidate UI, real DPI/multi-monitor behavior, pointer/touch interaction, RDP experience, or performance numbers.
+Hosted green CI is valid evidence for compilation, static contracts, deterministic pure logic, package construction/consumption, corpus metadata rules, and AppleReferenceLab buildability. As the 2026-08-14 startup defect showed, it is not even evidence that the app starts. It is **not** evidence for pixel appearance, compositor quality, Narrator behavior, IME candidate UI, real DPI/multi-monitor behavior, pointer/touch interaction, RDP experience, or performance numbers.
 
 ## Next 10 actions
 
@@ -141,6 +143,7 @@ These are now primarily evidence/tuning tasks rather than more speculative sourc
 
 ## Status change log
 
+- **2026-08-14:** Replaced CoreWindow-dependent APIs with `Microsoft.UI.System.ThemeSettings` and marshalled background-thread `UISettings` events, fixing a startup crash that had made every Gallery launch fail. Added `validate-desktop-runtime.ps1` so the class of defect cannot reappear invisibly. First desktop launch of the window-foundation and material-region path recorded in the window-backdrop and material acceptance docs; launch survival only, no visual or performance claim.
 - **2026-08-13:** Hosted implementation pass completed through native Mica/Solid window foundation, shared adaptive material runtime, deterministic Gallery diagnostics, benchmark workloads, non-invasive AutomationPeers, 70-row public-safe corpus, buildable AppleReferenceLab/macOS 26 CI, package validation, generated-package consumer validation, and SBOM supply-chain checks.
 - **2026-08-13:** M0 accounting advanced to 5/6 complete + 1 partial. M0 remains open because observed measurement-ledger evidence has not been captured.
 - **2026-08-13:** Earlier build, Theme, Controls, material-architecture, repository/bootstrap, naming, and licensing baselines established.
