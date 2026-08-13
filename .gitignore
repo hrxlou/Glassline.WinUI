@@ -28,3 +28,7 @@ Thumbs.db
 research/**/captures-private/
 tests/baselines/**/actual/
 tests/baselines/**/diff/
+
+# Python bytecode from research measurement scripts
+__pycache__/
+*.pyc
