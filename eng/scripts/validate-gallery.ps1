@@ -23,7 +23,7 @@ $benchmarkSmoke = Get-Content $benchmarkSmokePath -Raw
 
 [xml]$xamlXml = $xaml
 foreach ($automationId in @(
-    'Scene.WindowFoundation','Scene.MaterialRegions','Scene.ControlsMatrix','Diagnostics.MaterialRuntime',
+    'Scene.WindowFoundation','Scene.MaterialRegions','Scene.ControlsMatrix','Scene.TitleBarBand','Diagnostics.MaterialRuntime',
     'Scene.BenchmarkSettings','Scene.BenchmarkGrid','Scene.BenchmarkTree',
     'Benchmark.Settings.List','Benchmark.Grid.Items','Benchmark.Tree.Nodes')) {
     $needle = 'AutomationProperties.AutomationId="' + $automationId + '"'
@@ -39,13 +39,13 @@ foreach ($name in @(
         throw "Gallery missing diagnostics/material/benchmark element: $name"
     }
 }
-foreach ($scene in @('window-foundation','material-regions','controls-matrix','benchmark-settings','benchmark-grid','benchmark-tree')) {
+foreach ($scene in @('window-foundation','material-regions','controls-matrix','titlebar-band','benchmark-settings','benchmark-grid','benchmark-tree')) {
     if ($sceneIds -notmatch [regex]::Escape($scene)) {
         throw "Gallery deterministic scene ID missing: $scene"
     }
 }
 foreach ($symbol in @(
-    'GallerySceneIds.WindowFoundation','GallerySceneIds.MaterialRegions','GallerySceneIds.ControlsMatrix',
+    'GallerySceneIds.WindowFoundation','GallerySceneIds.MaterialRegions','GallerySceneIds.ControlsMatrix','GallerySceneIds.TitleBarBand',
     'GallerySceneIds.BenchmarkSettings','GallerySceneIds.BenchmarkGrid','GallerySceneIds.BenchmarkTree',
     'argument-precedence','unknown-fallback')) {
     if ($sceneSmoke -notmatch [regex]::Escape($symbol)) {

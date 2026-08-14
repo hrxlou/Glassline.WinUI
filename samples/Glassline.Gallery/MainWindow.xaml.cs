@@ -23,6 +23,19 @@ public sealed partial class MainWindow : Window
             Environment.GetCommandLineArgs(),
             Environment.GetEnvironmentVariable("GLASSLINE_GALLERY_SCENE"));
 
+        // Scene-gated so the benchmark scenes keep plain window chrome and stay comparable with
+        // earlier runs. ADR-0011 forbids assuming the reserved geometry, so the band reports what
+        // the shell actually returns rather than a constant.
+        if (GallerySceneIds.IsSceneVisible(requestedScene, GallerySceneIds.TitleBarBand))
+        {
+            ExtendsContentIntoTitleBar = true;
+            SetTitleBar(GalleryTitleBar);
+        }
+        else
+        {
+            TitleBarMaterialRegion.Visibility = Visibility.Collapsed;
+        }
+
         backdropController = new GlasslineWindowBackdropController(this);
         backdropController.EffectiveKindChanged += OnBackdropEffectiveKindChanged;
 
@@ -157,6 +170,15 @@ public sealed partial class MainWindow : Window
             .ToArray();
         double totalArea = activeRegions.Sum(region => region.ActualWidth * region.ActualHeight);
         RegionStatus.Text = $"Regions: active={activeRegions.Length}, approximateLayoutArea={totalArea:F0} DIP^2";
+
+        // The shell owns these, so the band reports what it returns rather than a constant. They
+        // change with DPI, text scale, window state, and flow direction.
+        AppWindowTitleBar systemTitleBar = AppWindow.TitleBar;
+        TitleBarStatus.Text =
+            $"TitleBar: extendsIntoTitleBar={ExtendsContentIntoTitleBar}, " +
+            $"leftInset={systemTitleBar.LeftInset}, rightInset={systemTitleBar.RightInset}, " +
+            $"height={systemTitleBar.Height}, flow={GalleryTitleBar.FlowDirection}, " +
+            $"bandMode={TitleBarMaterialRegion.EffectiveMode}";
     }
 
     private void OnWindowActivated(object sender, WindowActivatedEventArgs args)
