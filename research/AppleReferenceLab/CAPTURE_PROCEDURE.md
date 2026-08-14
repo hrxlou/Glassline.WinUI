@@ -1,6 +1,6 @@
 # AppleReferenceLab Capture Procedure
 
-Status: **54 of 60 required captures taken and verified; 6 `increase-contrast` captures outstanding**.
+Status: **60 of 60 filenames delivered, but only 43 hold a distinct captured state. 17 inactive-window captures must be retaken.**
 
 Session history:
 
@@ -12,6 +12,12 @@ Session history:
   `increase-contrast` variant could not be captured because the matrix required an isolated contrast
   state that macOS does not provide; the variant has since been redefined to the coupled state
   macOS actually exposes.
+- **2026-08-14, third attempt** — all 60 filenames delivered, including the six contrast captures,
+  every one at a measured 2.0000 px/pt. But 17 of the 18 inactive-window captures carry a header
+  reading `window=active`: nine are byte-identical to their active counterpart and eight are
+  re-encodings of it. Only `buttons__dark__inactive__default` is a genuine inactive capture. The
+  first two reviews of this set missed it, because filename and calibration checks cannot see the
+  difference. `verify-captures.py` now compares headers and rejects the set.
 
 ## Why the contrast variant is scene-limited
 
