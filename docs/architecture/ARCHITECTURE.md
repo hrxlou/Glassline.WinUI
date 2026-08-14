@@ -228,7 +228,7 @@ DesignGeneration: 2026
 최소 ADR:
 
 - `ADR-0001` Pure WinUI 3, no cross-platform runtime
-- `ADR-0002` Right-side Windows caption semantics
+- `ADR-0011` System caption placement and titlebar ownership (supersedes `ADR-0002`)
 - `ADR-0003` Semantic token model
 - `ADR-0004` Functional glass vs content surface separation
 - `ADR-0005` No Apple assets in shipping package

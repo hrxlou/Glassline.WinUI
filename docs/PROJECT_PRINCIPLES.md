@@ -9,7 +9,7 @@ DO
 ✓ semantic tokens
 ✓ Apple UI를 연구해 독립적으로 재해석
 ✓ functional glass only where it adds hierarchy
-✓ right-side Windows caption semantics
+✓ Windows caption semantics in the system-reserved trailing corner (LTR right, RTL left)
 ✓ Light/Dark/High Contrast를 처음부터
 ✓ screenshot + UIA + IME + perf CI
 ✓ visual generation을 version으로 고정

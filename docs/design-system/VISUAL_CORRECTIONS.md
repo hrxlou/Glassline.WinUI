@@ -9,7 +9,7 @@ The HTML fidelity lab is a **research abstraction**, not the shipping renderer. 
 - **Content is not glass.** Settings rows, tables, and text fields remain standard/flat content surfaces; glass is a functional layer.
 - **Dark mode has its own palette.** Window/content/group/sidebar/glass luminance relationships are tuned independently.
 - **Press is an optical response.** Prefer specular movement, subtle compression, and release overshoot over large scale/ripple effects.
-- **Caption grammar remains Windows-native.** Do not move macOS traffic-light controls to the right; keep Windows glyphs and semantics on the right and alter the surrounding chrome only.
+- **Caption grammar remains Windows-native.** Do not transplant macOS traffic-light controls. Keep Windows glyphs and semantics in the system-reserved trailing corner — right under LTR, left under RTL — and alter the surrounding chrome only. Caption geometry is read from `AppWindowTitleBar` at runtime, never hardcoded; see ADR-0011.
 
 ## Visual acceptance rule
 
