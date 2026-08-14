@@ -18,11 +18,16 @@ func captureIdentifiersAreUniqueAndParseable() {
 
     for descriptor in descriptors {
         let fields = descriptor.id.components(separatedBy: "__")
-        #expect(fields.count == 4)
+        // The interaction field is present only when it is not `normal`, which is what keeps ids
+        // minted before the interaction axis unchanged.
+        #expect(fields.count == (descriptor.interaction == .normal ? 4 : 5))
         #expect(fields[0] == descriptor.scene.rawValue)
         #expect(fields[1] == descriptor.appearance.rawValue)
         #expect(fields[2] == descriptor.windowState.rawValue)
         #expect(fields[3] == descriptor.accessibilityMode.rawValue)
+        if descriptor.interaction != .normal {
+            #expect(fields[4] == descriptor.interaction.rawValue)
+        }
     }
 }
 

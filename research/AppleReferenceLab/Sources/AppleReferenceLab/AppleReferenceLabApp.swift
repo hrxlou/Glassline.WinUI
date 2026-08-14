@@ -143,17 +143,17 @@ private struct ReferenceHeader: View {
             Text(scene.title)
                 .font(.title2)
 
-            Text("capture_id=\(captureIdDescription)")
+            Text(verbatim: "capture_id=\(captureIdDescription)")
                 .font(.caption.monospaced().bold())
                 .textSelection(.enabled)
                 .accessibilityIdentifier("ReferenceCaptureId")
 
-            Text("appearance=\(appearance.rawValue) | window=\(windowState.rawValue) | interaction=\(reporter.current.rawValue) | contrast=\(colorSchemeContrast == .increased ? "increased" : "standard") | reduceTransparency=\(reduceTransparency) | reduceMotion=\(reduceMotion) | differentiateWithoutColor=\(differentiateWithoutColor)")
+            Text(verbatim: "appearance=\(appearance.rawValue) | window=\(windowState.rawValue) | interaction=\(reporter.current.rawValue) | contrast=\(colorSchemeContrast == .increased ? "increased" : "standard") | reduceTransparency=\(reduceTransparency) | reduceMotion=\(reduceMotion) | differentiateWithoutColor=\(differentiateWithoutColor)")
                 .font(.caption2.monospaced())
                 .foregroundStyle(.secondary)
                 .textSelection(.enabled)
 
-            Text("backing_scale=\(backingScaleDescription) os=\(ProcessInfo.processInfo.operatingSystemVersionString)")
+            Text(verbatim: "backing_scale=\(backingScaleDescription) os=\(ProcessInfo.processInfo.operatingSystemVersionString)")
                 .font(.caption2.monospaced())
                 .foregroundStyle(.secondary)
                 .textSelection(.enabled)
@@ -244,7 +244,7 @@ private struct CalibrationRule: View {
             }
             .border(Color.primary)
 
-            Text("calibration_rule=\(stepCount)x\(Int(stepPoints))pt total=\(Int(CGFloat(stepCount) * stepPoints))pt")
+            Text(verbatim: "calibration_rule=\(stepCount)x\(Int(stepPoints))pt total=\(Int(CGFloat(stepCount) * stepPoints))pt")
                 .font(.caption2.monospaced())
                 .foregroundStyle(.secondary)
                 .textSelection(.enabled)
