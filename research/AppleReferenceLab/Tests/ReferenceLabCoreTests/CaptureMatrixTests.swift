@@ -31,8 +31,10 @@ func sceneCaptureShapeFollowsTheContrastVariantRule() {
     for scene in ReferenceScene.allCases {
         let descriptors = CaptureMatrix.required(for: scene)
         let wantsContrast = CaptureMatrix.contrastVariantScenes.contains(scene)
+        let wantsInteraction = CaptureMatrix.interactionScenes.contains(scene)
 
-        #expect(descriptors.count == (wantsContrast ? 8 : 6))
+        let expected = (wantsContrast ? 8 : 6) + (wantsInteraction ? 6 : 0)
+        #expect(descriptors.count == expected)
         #expect(descriptors.allSatisfy { $0.scene == scene })
 
         // Inactive-window evidence is only required for the default accessibility mode.
@@ -48,7 +50,62 @@ func sceneCaptureShapeFollowsTheContrastVariantRule() {
 @Test
 func contrastVariantIsRequiredOnlyWhereItAddsEvidence() {
     #expect(CaptureMatrix.contrastVariantScenes == [.buttons, .textInput, .sidebar])
-    #expect(CaptureMatrix.all.count == 60)
+    #expect(CaptureMatrix.all.count == 84)
+}
+
+@Test
+func normalInteractionLeavesCaptureIdsUnchanged() {
+    // Captures taken before the interaction axis existed must stay valid and stay citable.
+    let descriptor = CaptureDescriptor(
+        scene: .buttons,
+        appearance: .light,
+        windowState: .active,
+        accessibilityMode: .standard
+    )
+
+    #expect(descriptor.interaction == .normal)
+    #expect(descriptor.id == "buttons__light__active__default")
+}
+
+@Test
+func interactionVariantsAppendExactlyOneField() {
+    let descriptor = CaptureDescriptor(
+        scene: .pickers,
+        appearance: .dark,
+        windowState: .active,
+        accessibilityMode: .standard,
+        interaction: .focused
+    )
+
+    #expect(descriptor.id == "pickers__dark__active__default__focused")
+}
+
+@Test
+func interactionVariantsAreRequiredOnlyOnBaselineEnvironments() {
+    let scene = ReferenceScene.buttons
+    #expect(CaptureMatrix.interactionScenes.contains(scene))
+
+    // An interaction variant isolates the control state, so nothing else may vary with it.
+    #expect(CaptureMatrix.descriptor(
+        scene: scene, appearance: .light, windowState: .inactive,
+        reduceTransparency: false, increaseContrast: false, interaction: .hover
+    ) == nil)
+
+    #expect(CaptureMatrix.descriptor(
+        scene: scene, appearance: .light, windowState: .active,
+        reduceTransparency: true, increaseContrast: false, interaction: .hover
+    ) == nil)
+
+    // And a scene without the axis resolves nothing at all.
+    #expect(CaptureMatrix.descriptor(
+        scene: .window, appearance: .light, windowState: .active,
+        reduceTransparency: false, increaseContrast: false, interaction: .hover
+    ) == nil)
+
+    #expect(CaptureMatrix.descriptor(
+        scene: scene, appearance: .light, windowState: .active,
+        reduceTransparency: false, increaseContrast: false, interaction: .hover
+    )?.id == "buttons__light__active__default__hover")
 }
 
 @Test

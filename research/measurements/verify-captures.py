@@ -142,6 +142,30 @@ def main():
                             f"record the same window state and this one is a mislabelled copy")
     print(f"window-state headers: {checked} inactive capture(s) compared")
 
+    # 5. interaction captures record a real interaction
+    checked = 0
+    for capture_id, row in manifest.items():
+        interaction = row.get("interaction", "normal")
+        if interaction == "normal":
+            continue
+        counterpart = capture_id[: -(len(interaction) + 2)]
+        if capture_id not in by_id or counterpart not in by_id:
+            continue
+
+        band_a = header_band(by_id[capture_id])
+        band_b = header_band(by_id[counterpart])
+        checked += 1
+
+        if band_a is None or band_b is None or band_a.shape != band_b.shape:
+            failures.append(f"{capture_id}: header band could not be compared to {counterpart}")
+            continue
+
+        changed = int((np.abs(band_a - band_b).max(axis=2) > 32).sum())
+        if changed < HEADER_CHANGED_PIXELS:
+            failures.append(f"{capture_id}: its header is identical to {counterpart}, so the probe "
+                            f"was not in the '{interaction}' state when this was captured")
+    print(f"interaction headers: {checked} interaction capture(s) compared")
+
     print()
     for warning in warnings:
         print(f"WARN  {warning}")

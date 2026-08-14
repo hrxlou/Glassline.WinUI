@@ -1,6 +1,6 @@
 # AppleReferenceLab Capture Procedure
 
-Status: **60 of 60 filenames delivered, but only 43 hold a distinct captured state. 17 inactive-window captures must be retaken.**
+Status: **43 of 84 required captures held. 17 inactive-window captures must be retaken, and 24 interaction captures are new.**
 
 Session history:
 
@@ -108,6 +108,37 @@ scaled display modes and the backing scale factor are not the same number.
 
 If the rule does not measure to a clean multiple in a capture, that capture is unusable for geometry.
 Record it as unusable rather than rounding.
+
+## Interaction states
+
+`buttons`, `toggle-slider`, `text-input`, and `pickers` each require `hover`, `pressed`, and
+`focused` captures of one designated state probe — the Default button, the Toggle, the TextField,
+and the menu Picker. Hover, press, and focus are one visual grammar repeated across controls, so
+these four cover the shapes it takes rather than every scene repeating it.
+
+The probe reports its own interaction state. Appearance, window state, and accessibility mode come
+from the environment, but hover, press, and focus belong to one control, so that control publishes
+them and the header stays self-proving. An operator-asserted state would defeat the header check.
+
+Interaction variants are baseline-only: key window, standard accessibility. An interaction capture
+that also changes the accessibility mode isolates nothing, and the probe resolves it to `NONE`.
+
+`pressed` is the awkward one: the state only exists while the button is held, so the mouse must stay
+down through the countdown and until the shutter fires.
+
+## Guided session
+
+```sh
+research/AppleReferenceLab/capture-session.sh ~/glassline-captures
+```
+
+Walks the manifest in an order that changes system settings once per group, states what must be true
+before each shot, and writes each file under the manifest's own `capture_id`. The operator never
+types a filename — every defect in the first three deliveries lived in the gap between what was on
+screen and what the file was called.
+
+Existing captures are skipped, so an interrupted session resumes. It offers to run
+`verify-captures.py` at the end.
 
 ## Running the probe
 

@@ -19,33 +19,57 @@ public enum CaptureAccessibilityMode: String, CaseIterable, Sendable {
     case increaseContrast = "increase-contrast"
 }
 
+/// Interaction state of the scene's designated state probe.
+///
+/// Unlike appearance or window state, this is a property of one control rather than the window, so
+/// the probe reports its own hover/focus/press rather than inferring anything from the environment.
+/// An operator-asserted interaction state would defeat the header check entirely.
+public enum CaptureInteraction: String, CaseIterable, Sendable {
+    case normal
+    case hover
+    case pressed
+    case focused
+}
+
 /// One required capture. `id` is the vocabulary the measurement ledger cites as `source_id`.
 public struct CaptureDescriptor: Equatable, Sendable {
     public let scene: ReferenceScene
     public let appearance: CaptureAppearance
     public let windowState: CaptureWindowState
     public let accessibilityMode: CaptureAccessibilityMode
+    public let interaction: CaptureInteraction
 
     public init(
         scene: ReferenceScene,
         appearance: CaptureAppearance,
         windowState: CaptureWindowState,
-        accessibilityMode: CaptureAccessibilityMode
+        accessibilityMode: CaptureAccessibilityMode,
+        interaction: CaptureInteraction = .normal
     ) {
         self.scene = scene
         self.appearance = appearance
         self.windowState = windowState
         self.accessibilityMode = accessibilityMode
+        self.interaction = interaction
     }
 
     /// Scene ids contain hyphens, so fields are separated by a double underscore.
+    ///
+    /// `normal` appends nothing, which keeps every id minted before the interaction axis existed
+    /// unchanged — captures already taken stay valid and stay citable by the ledger.
     public var id: String {
-        [
+        var fields = [
             scene.rawValue,
             appearance.rawValue,
             windowState.rawValue,
             accessibilityMode.rawValue
-        ].joined(separator: "__")
+        ]
+
+        if interaction != .normal {
+            fields.append(interaction.rawValue)
+        }
+
+        return fields.joined(separator: "__")
     }
 }
 
@@ -55,7 +79,7 @@ public struct CaptureDescriptor: Equatable, Sendable {
 /// cite a stable source. This enumerates the required captures instead, and emits the manifest that
 /// `eng/scripts/validate-measurement-ledger.ps1` checks ledger rows against.
 public enum CaptureMatrix {
-    public static let manifestHeader = "capture_id,scene,appearance,window_state,accessibility_mode"
+    public static let manifestHeader = "capture_id,scene,appearance,window_state,accessibility_mode,interaction"
 
     /// Scenes where the contrast variant teaches something the other variants do not.
     ///
@@ -72,10 +96,37 @@ public enum CaptureMatrix {
         }
     }
 
+    /// Scenes whose designated state probe is worth capturing in each interaction state.
+    ///
+    /// Hover, press, and focus are one visual grammar repeated across controls, so capturing it
+    /// everywhere buys repetition. These four cover the distinct shapes it takes: a filled control,
+    /// a track-and-knob control, a text field's focus ring, and a segmented selection.
+    public static let interactionScenes: Set<ReferenceScene> = [
+        .buttons, .toggleSlider, .textInput, .pickers,
+    ]
+
+    /// Hover, press, and focus all require the window to be key, and isolating the interaction means
+    /// not also changing the accessibility mode.
+    public static func interactions(for scene: ReferenceScene) -> [CaptureInteraction] {
+        interactionScenes.contains(scene) ? CaptureInteraction.allCases : [.normal]
+    }
+
     public static func required(for scene: ReferenceScene) -> [CaptureDescriptor] {
         var descriptors: [CaptureDescriptor] = []
 
         for appearance in CaptureAppearance.allCases {
+            for interaction in interactions(for: scene) where interaction != .normal {
+                descriptors.append(
+                    CaptureDescriptor(
+                        scene: scene,
+                        appearance: appearance,
+                        windowState: .active,
+                        accessibilityMode: .standard,
+                        interaction: interaction
+                    )
+                )
+            }
+
             for mode in accessibilityModes(for: scene) {
                 // Inactive-window evidence is required once per appearance. The accessibility
                 // variants isolate material and contrast response, which activation does not change.
@@ -131,12 +182,32 @@ public enum CaptureMatrix {
         appearance: CaptureAppearance,
         windowState: CaptureWindowState,
         reduceTransparency: Bool,
-        increaseContrast: Bool
+        increaseContrast: Bool,
+        interaction: CaptureInteraction = .normal
     ) -> CaptureDescriptor? {
         let mode = accessibilityMode(
             reduceTransparency: reduceTransparency,
             increaseContrast: increaseContrast
         )
+
+        if interaction != .normal {
+            // An interaction variant isolates the control state, so everything else must be the
+            // baseline: key window, standard accessibility, and a scene that requires the axis.
+            guard interactions(for: scene).contains(interaction),
+                  windowState == .active,
+                  mode == .standard
+            else {
+                return nil
+            }
+
+            return CaptureDescriptor(
+                scene: scene,
+                appearance: appearance,
+                windowState: windowState,
+                accessibilityMode: mode,
+                interaction: interaction
+            )
+        }
 
         // Accessibility variants are only required for the active window.
         if mode != .standard, windowState != .active {
@@ -174,7 +245,8 @@ public enum CaptureMatrix {
                 descriptor.scene.rawValue,
                 descriptor.appearance.rawValue,
                 descriptor.windowState.rawValue,
-                descriptor.accessibilityMode.rawValue
+                descriptor.accessibilityMode.rawValue,
+                descriptor.interaction.rawValue
             ].joined(separator: ",")
         }
 
