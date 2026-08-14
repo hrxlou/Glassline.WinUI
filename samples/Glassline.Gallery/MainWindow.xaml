@@ -9,7 +9,24 @@
             x:Name="WindowSolidFallback"
             Background="{ThemeResource Glassline.Surface.Window}"
             IsHitTestVisible="False" />
-        <ScrollViewer>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <glassline:GlasslineGlassContainer
+                x:Name="TitleBarMaterialRegion"
+                Grid.Row="0"
+                AutomationProperties.Name="Titlebar band material region"
+                Material="Toolbar"
+                Quality="Auto">
+                <TitleBar
+                    x:Name="GalleryTitleBar"
+                    AutomationProperties.AutomationId="Scene.TitleBarBand"
+                    Subtitle="shared material band"
+                    Title="Glassline Gallery" />
+            </glassline:GlasslineGlassContainer>
+            <ScrollViewer Grid.Row="1">
             <StackPanel x:Name="GalleryRoot" Padding="32" Spacing="20">
                 <TextBlock Style="{StaticResource TitleTextBlockStyle}" Foreground="{ThemeResource Glassline.Text.Primary}" Text="Glassline.WinUI" />
                 <TextBlock x:Name="RequestedSceneStatus" Style="{StaticResource Glassline.CaptionTextStyle}" />
@@ -26,6 +43,7 @@
                         <TextBlock x:Name="EnvironmentStatus" Style="{StaticResource Glassline.CaptionTextStyle}" TextWrapping="Wrap" />
                         <TextBlock x:Name="MaterialStatus" Style="{StaticResource Glassline.CaptionTextStyle}" TextWrapping="Wrap" />
                         <TextBlock x:Name="RegionStatus" Style="{StaticResource Glassline.CaptionTextStyle}" TextWrapping="Wrap" />
+                        <TextBlock x:Name="TitleBarStatus" Style="{StaticResource Glassline.CaptionTextStyle}" TextWrapping="Wrap" />
                     </StackPanel>
                 </Border>
 
@@ -148,6 +166,7 @@
                     </StackPanel>
                 </Border>
             </StackPanel>
-        </ScrollViewer>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Window>

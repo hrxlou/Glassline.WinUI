@@ -6,6 +6,7 @@ public static class GallerySceneIds
     public const string WindowFoundation = "window-foundation";
     public const string MaterialRegions = "material-regions";
     public const string ControlsMatrix = "controls-matrix";
+    public const string TitleBarBand = "titlebar-band";
     public const string BenchmarkSettings = "benchmark-settings";
     public const string BenchmarkGrid = "benchmark-grid";
     public const string BenchmarkTree = "benchmark-tree";
@@ -39,6 +40,7 @@ public static class GallerySceneIds
             WindowFoundation => WindowFoundation,
             MaterialRegions => MaterialRegions,
             ControlsMatrix => ControlsMatrix,
+            TitleBarBand => TitleBarBand,
             BenchmarkSettings => BenchmarkSettings,
             BenchmarkGrid => BenchmarkGrid,
             BenchmarkTree => BenchmarkTree,

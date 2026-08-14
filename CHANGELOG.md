@@ -36,6 +36,7 @@ All notable project changes are recorded here. The project has not published a p
 
 ### Gallery / validation
 
+- Added a `titlebar-band` scene hosting the native WinUI `TitleBar` control inside a `GlasslineGlassContainer`, with the shell's reported `LeftInset`/`RightInset`/`Height`/`FlowDirection` in the diagnostics readout. It is scene-gated so benchmark scenes keep plain window chrome and stay comparable with earlier runs.
 - Added deterministic window-foundation, material-regions, and controls-matrix scenes with stable AutomationIds.
 - Added material/environment diagnostics and activation/continuous-resize propagation.
 - Added deterministic performance workloads: Settings 100 rows, Grid 500 items, Tree 5000 non-root nodes.

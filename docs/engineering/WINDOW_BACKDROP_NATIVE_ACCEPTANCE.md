@@ -13,6 +13,28 @@
 
 ## Native evidence recorded
 
+- 2026-08-14, Windows 11 Enterprise 10.0.26200, x64 Debug, `titlebar-band` scene: the native WinUI
+  `TitleBar` control composes **inside** `GlasslineGlassContainer`, and the band resolves to `Full`
+  material while the system caption buttons stay drawn and legible over it. Measured from the live
+  window with `ExtendsContentIntoTitleBar = true`:
+
+  | Reported | Value |
+  |---|---|
+  | `LeftInset` | 0 |
+  | `RightInset` | 138 |
+  | `Height` | 32 |
+  | `FlowDirection` | LeftToRight |
+  | band effective mode | Full |
+
+  Two findings follow. Glassline does not need a bespoke titlebar primitive — the platform control
+  carries the slots, and material renders beneath it. And the reserved geometry is **only reported
+  once the app opts into owning the titlebar**: the same scene with `ExtendsContentIntoTitleBar`
+  false reports every inset as 0, so ADR-0011's rule that these are queried rather than assumed is
+  not merely good practice, it is the only way to obtain them at all.
+
+  Not covered: RTL flow, non-100% scale, narrow windows, High Contrast, and inactive-window caption
+  rendering. This is one configuration on one machine.
+
 - 2026-08-14, Windows 11 Enterprise 10.0.26200, x64 Debug: the Gallery reaches an interactive window (`Glassline Gallery`, responding) and stays alive. This is the first recorded desktop launch of the window-backdrop path; before the `ThemeSettings` fix, `AccessibilitySettings.HighContrastChanged` threw during startup on every launch while CI stayed green. Launch survival only — no visual, DPI, or interaction claim is made here.
 
 ## Native Windows acceptance still required

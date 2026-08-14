@@ -14,6 +14,7 @@ AssertEqual("argument-precedence", GallerySceneIds.ResolveRequestedScene(["--sce
 AssertEqual("benchmark-settings-selection", GallerySceneIds.ResolveRequestedScene(["--scene=benchmark-settings"], null), GallerySceneIds.BenchmarkSettings);
 AssertEqual("benchmark-grid-selection", GallerySceneIds.ResolveRequestedScene(["--scene=benchmark-grid"], null), GallerySceneIds.BenchmarkGrid);
 AssertEqual("benchmark-tree-selection", GallerySceneIds.ResolveRequestedScene(["--scene=benchmark-tree"], null), GallerySceneIds.BenchmarkTree);
+AssertEqual("titlebar-band-selection", GallerySceneIds.ResolveRequestedScene(["--scene=titlebar-band"], null), GallerySceneIds.TitleBarBand);
 AssertEqual("unknown-fallback", GallerySceneIds.ResolveRequestedScene(["--scene=unknown"], null), GallerySceneIds.All);
 
 if (!GallerySceneIds.IsSceneVisible(GallerySceneIds.All, GallerySceneIds.WindowFoundation) ||
@@ -23,7 +24,12 @@ if (!GallerySceneIds.IsSceneVisible(GallerySceneIds.All, GallerySceneIds.WindowF
     GallerySceneIds.IsSceneVisible(GallerySceneIds.All, GallerySceneIds.BenchmarkTree) ||
     !GallerySceneIds.IsSceneVisible(GallerySceneIds.BenchmarkSettings, GallerySceneIds.BenchmarkSettings) ||
     !GallerySceneIds.IsSceneVisible(GallerySceneIds.BenchmarkGrid, GallerySceneIds.BenchmarkGrid) ||
-    !GallerySceneIds.IsSceneVisible(GallerySceneIds.BenchmarkTree, GallerySceneIds.BenchmarkTree))
+    !GallerySceneIds.IsSceneVisible(GallerySceneIds.BenchmarkTree, GallerySceneIds.BenchmarkTree) ||
+    // The titlebar band extends content into the titlebar, so it must stay out of the benchmark
+    // scenes: their window chrome has to match earlier runs to remain comparable.
+    !GallerySceneIds.IsSceneVisible(GallerySceneIds.All, GallerySceneIds.TitleBarBand) ||
+    !GallerySceneIds.IsSceneVisible(GallerySceneIds.TitleBarBand, GallerySceneIds.TitleBarBand) ||
+    GallerySceneIds.IsSceneVisible(GallerySceneIds.BenchmarkGrid, GallerySceneIds.TitleBarBand))
 {
     throw new InvalidOperationException("Scene visibility policy failed.");
 }
