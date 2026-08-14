@@ -123,7 +123,7 @@ experimental lab → preview/experimental API 허용, shipping package에는 금
 
 ### Windows 관례를 유지하는 것
 
-- caption cluster 위치: **오른쪽 상단**
+- caption cluster 위치: **Windows가 정하는 system-reserved trailing corner** (LTR 우상단, RTL 좌상단). Glassline은 위치·크기를 하드코딩하지 않고 `AppWindowTitleBar` inset을 런타임 조회한다 — ADR-0011 참조
 - 순서: **Minimize → Maximize/Restore → Close**
 - 기본 glyph 의미: `− / □ / ×`
 - Alt+F4
@@ -135,7 +135,7 @@ experimental lab → preview/experimental API 허용, shipping package에는 금
 
 ### Caption 구현 원칙
 
-WinUI는 content를 titlebar 영역까지 확장하면서도 system caption controls를 유지할 수 있다. v1 기본 구현은 이를 우선한다. 완전 custom caption glyph는 **같은 오른쪽 위치와 Windows semantics를 유지할 수 있을 때만** 별도 opt-in으로 검토한다.
+WinUI는 content를 titlebar 영역까지 확장하면서도 system caption controls를 유지할 수 있다. v1 기본 구현은 이를 우선한다. 완전 custom caption glyph는 **같은 system-reserved trailing corner와 Windows semantics를 유지할 수 있을 때만** 별도 opt-in으로 검토한다.
 
 Microsoft reference: https://learn.microsoft.com/en-us/windows/apps/develop/title-bar?tabs=winui3
 

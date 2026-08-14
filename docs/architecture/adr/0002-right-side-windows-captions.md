@@ -1,7 +1,12 @@
 # ADR-0002: Right-side Windows caption semantics
 
-- Status: **Accepted**
+- Status: **Superseded by [ADR-0011](0011-system-caption-ownership.md)**
 - Date: 2026-08-13
+- Superseded: 2026-08-14
+
+> This ADR fixed the caption cluster to the top-right. That holds for LTR only — Windows moves the
+> caption cluster to the leading corner under RTL flow direction — and more broadly it froze a value
+> the shell owns as a project decision. ADR-0011 replaces it.
 
 ## Context
 

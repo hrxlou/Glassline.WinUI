@@ -134,7 +134,7 @@ Button → Toggle → Slider → TextBox → Search → Check/Radio → Combo �
 ### M4 — Window & Shell · 2–3주
 
 - titlebar integration
-- right caption policy
+- trailing-corner caption policy
 - sidebar + toolbar
 - Settings archetype
 - Finder/productivity archetype

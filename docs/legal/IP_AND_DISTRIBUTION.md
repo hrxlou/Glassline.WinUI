@@ -117,7 +117,7 @@ review_date: ...
 
 위험을 줄이는 제품 결정:
 
-- right-side Windows caption semantics
+- Windows caption semantics in the system-reserved trailing corner
 - 자체 typography metrics
 - 자체 icon paths
 - 자체 glass shader/effect values
