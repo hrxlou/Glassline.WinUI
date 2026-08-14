@@ -6,6 +6,7 @@ import SwiftUI
 @MainActor
 struct AppleReferenceLabApp: App {
     @State private var selectedScene: ReferenceScene
+    @StateObject private var interaction = InteractionReporter()
 
     init() {
         let initial = ReferenceSceneSelection.resolve(
@@ -19,8 +20,54 @@ struct AppleReferenceLabApp: App {
         WindowGroup("AppleReferenceLab") {
             ReferenceLabRootView(selectedScene: $selectedScene)
                 .frame(minWidth: 920, minHeight: 640)
+                .environmentObject(interaction)
         }
         .defaultSize(width: 1040, height: 760)
+    }
+}
+
+/// Live interaction state of the scene's designated state probe.
+///
+/// The header must not print a state the operator merely intends. Appearance, window state, and
+/// accessibility mode come from the environment; hover, press, and focus belong to one control, so
+/// that control reports them itself and the header stays self-proving.
+@MainActor
+final class InteractionReporter: ObservableObject {
+    @Published var hovering = false
+    @Published var pressing = false
+    @Published var focused = false
+
+    var current: CaptureInteraction {
+        if pressing { return .pressed }
+        if focused { return .focused }
+        if hovering { return .hover }
+        return .normal
+    }
+}
+
+private struct StateProbe: ViewModifier {
+    @EnvironmentObject private var reporter: InteractionReporter
+    @FocusState private var isFocused: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .focused($isFocused)
+            .onHover { reporter.hovering = $0 }
+            .onChange(of: isFocused) { _, focused in reporter.focused = focused }
+            // A press is only observable while the button is held, so the capture must fire during
+            // the hold. minimumDistance 0 reports the press without waiting for a drag.
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { _ in reporter.pressing = true }
+                    .onEnded { _ in reporter.pressing = false }
+            )
+            .accessibilityIdentifier("ReferenceStateProbe")
+    }
+}
+
+private extension View {
+    func stateProbe() -> some View {
+        modifier(StateProbe())
     }
 }
 
@@ -87,6 +134,7 @@ private struct ReferenceHeader: View {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityDifferentiateWithoutColor) private var differentiateWithoutColor
+    @EnvironmentObject private var reporter: InteractionReporter
 
     let scene: ReferenceScene
 
@@ -95,17 +143,17 @@ private struct ReferenceHeader: View {
             Text(scene.title)
                 .font(.title2)
 
-            Text("capture_id=\(captureIdDescription)")
+            Text(verbatim: "capture_id=\(captureIdDescription)")
                 .font(.caption.monospaced().bold())
                 .textSelection(.enabled)
                 .accessibilityIdentifier("ReferenceCaptureId")
 
-            Text("appearance=\(appearance.rawValue) | window=\(windowState.rawValue) | contrast=\(colorSchemeContrast == .increased ? "increased" : "standard") | reduceTransparency=\(reduceTransparency) | reduceMotion=\(reduceMotion) | differentiateWithoutColor=\(differentiateWithoutColor)")
+            Text(verbatim: "appearance=\(appearance.rawValue) | window=\(windowState.rawValue) | interaction=\(reporter.current.rawValue) | contrast=\(colorSchemeContrast == .increased ? "increased" : "standard") | reduceTransparency=\(reduceTransparency) | reduceMotion=\(reduceMotion) | differentiateWithoutColor=\(differentiateWithoutColor)")
                 .font(.caption2.monospaced())
                 .foregroundStyle(.secondary)
                 .textSelection(.enabled)
 
-            Text("backing_scale=\(backingScaleDescription) os=\(ProcessInfo.processInfo.operatingSystemVersionString)")
+            Text(verbatim: "backing_scale=\(backingScaleDescription) os=\(ProcessInfo.processInfo.operatingSystemVersionString)")
                 .font(.caption2.monospaced())
                 .foregroundStyle(.secondary)
                 .textSelection(.enabled)
@@ -138,7 +186,8 @@ private struct ReferenceHeader: View {
             appearance: appearance,
             windowState: windowState,
             reduceTransparency: reduceTransparency,
-            increaseContrast: colorSchemeContrast == .increased
+            increaseContrast: colorSchemeContrast == .increased,
+            interaction: reporter.current
         ) else {
             return "NONE — this environment matches no required capture; do not name a file from it"
         }
@@ -195,7 +244,7 @@ private struct CalibrationRule: View {
             }
             .border(Color.primary)
 
-            Text("calibration_rule=\(stepCount)x\(Int(stepPoints))pt total=\(Int(CGFloat(stepCount) * stepPoints))pt")
+            Text(verbatim: "calibration_rule=\(stepCount)x\(Int(stepPoints))pt total=\(Int(CGFloat(stepCount) * stepPoints))pt")
                 .font(.caption2.monospaced())
                 .foregroundStyle(.secondary)
                 .textSelection(.enabled)
@@ -229,6 +278,7 @@ private struct ButtonsProbeScene: View {
             ProbeSection("SwiftUI") {
                 HStack(spacing: 12) {
                     Button("Default") {}
+                        .stateProbe()
                     Button("Bordered") {}
                         .buttonStyle(.bordered)
                     Button("Prominent") {}
@@ -272,6 +322,7 @@ private struct ToggleSliderProbeScene: View {
             ProbeSection("SwiftUI") {
                 Toggle("Enabled", isOn: $enabled)
                     .frame(width: 260, alignment: .leading)
+                    .stateProbe()
                 Slider(value: $value)
                     .frame(width: 320)
             }
@@ -294,6 +345,7 @@ private struct TextInputProbeScene: View {
             ProbeSection("SwiftUI") {
                 TextField("Placeholder", text: $text)
                     .frame(width: 340)
+                    .stateProbe()
                 SecureField("Password", text: $password)
                     .frame(width: 340)
                 TextField("Disabled", text: .constant("Disabled"))
@@ -319,6 +371,7 @@ private struct PickersProbeScene: View {
                 Text("Three").tag(2)
             }
             .frame(width: 300)
+            .stateProbe()
 
             Picker("Segmented", selection: $selection) {
                 Text("One").tag(0)
