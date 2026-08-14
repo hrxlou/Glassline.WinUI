@@ -17,6 +17,21 @@ a measurement classifiable as Observed rather than assumed.
 exist — an empty ledger is an honest unfinished ledger — but rows that exist must be traceable and
 classified.
 
+## Verify a capture set before measuring it
+
+```sh
+python research/measurements/verify-captures.py <capture-directory>
+```
+
+This exists because a delivery passed a filename-and-scale review while 17 of its 18 inactive
+captures were copies of their active counterparts. Correct names and a correct calibration rule say
+nothing about whether a file holds the state its name claims.
+
+The decisive check is the header. Each capture prints the window state the probe actually saw, so
+two captures claiming different states must have different headers. Comparing whole images does not
+work in either direction: a genuinely inactive window can differ from its active counterpart by very
+little, while a re-encoded copy of the same state differs by a pixel of noise.
+
 ## How the current rows were measured
 
 `measure-captures.py` produces them from the private capture set:

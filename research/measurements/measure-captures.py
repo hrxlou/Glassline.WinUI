@@ -19,6 +19,7 @@ Usage:
 The capture directory is private research material and is never committed.
 """
 
+import hashlib
 import statistics
 import sys
 from pathlib import Path
@@ -204,8 +205,22 @@ def radius_estimate(mask, box):
 
 
 def measure_scene(paths):
-    """Collect per-control samples across every capture and threshold."""
+    """Collect per-control samples across every capture and threshold.
+
+    Byte-identical captures are dropped first. A delivery once contained mislabelled copies of the
+    active captures, and counting them would report a sample size the evidence does not have.
+    """
     heights, radii, scales = {}, {}, []
+
+    seen, unique = set(), []
+    for path in paths:
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        if digest in seen:
+            print(f"  {path.stem}: identical to an earlier capture — not counted")
+            continue
+        seen.add(digest)
+        unique.append(path)
+    paths = unique
 
     for path in paths:
         with Image.open(path) as img:
